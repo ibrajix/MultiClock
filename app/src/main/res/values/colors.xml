@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="main_pink">#FF7070</color>
+    <color name="bg">#F7F7F7</color>
+    <color name="card">#FFFFFF</color>
+    <color name="text_on_card_selected">#000000</color>
+    <color name="text_on_card_not_selected">#D8D8D8</color>
+    <color name="divider">#EDEDED</color>
+</resources>

@@ -1,0 +1,22 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Theme.MultiClock" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/bg</item>
+        <item name="android:statusBarColor">@color/bg</item>
+        <item name="android:windowBackground">@color/bg</item>
+        <item name="fontFamily">@font/be_vietnam_pro_regular</item>
+    </style>
+
+    <!--Custom BottomNav Indicator-->
+    <style name="Theme.MultiClock.CustomIndicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
+        <item name="android:color">@color/main_pink</item>
+    </style>
+
+    <!--Material Toolbar Title Appearance-->
+    <style name="Widget.Material3.Toolbar.TitleText" parent="TextAppearance.Material3.ActionBar.Title">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+</resources>

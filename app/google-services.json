@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "372137610665",
+    "project_id": "multiclock-e3c95",
+    "storage_bucket": "multiclock-e3c95.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:372137610665:android:5769203edd6fdfe08bc8b8",
+        "android_client_info": {
+          "package_name": "com.ibrajix.multiclock"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "372137610665-9vmkojb11nb27rhc2plucoc6kbhu5hht.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ibrajix.multiclock",
+            "certificate_hash": "fb4f839c349a6bcacf91038cf805f144a4cf966f"
+          }
+        },
+        {
+          "client_id": "372137610665-m0u5gqq26429k37epo3o9lt4t6i1c1hf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAk-dlJauCgUR7JY752YZX4o6zU4m769ls"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "372137610665-m0u5gqq26429k37epo3o9lt4t6i1c1hf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
