@@ -2,7 +2,7 @@
     <!-- Base application theme. -->
     <style name="Theme.MultiClock" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/bg</item>
+        <item name="colorPrimary">@color/main_pink</item>
         <item name="android:statusBarColor">@color/bg</item>
         <item name="android:windowBackground">@color/bg</item>
         <item name="fontFamily">@font/be_vietnam_pro_regular</item>

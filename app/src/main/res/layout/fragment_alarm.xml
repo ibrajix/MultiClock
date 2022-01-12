@@ -42,7 +42,7 @@
                     android:layout_height="?attr/actionBarSize"
                     app:menu="@menu/about_menu"
                     app:titleTextAppearance="@style/Widget.Material3.Toolbar.TitleText"
-                    app:title="@string/app_name">
+                    app:title="@string/alarm">
 
                 </com.google.android.material.appbar.MaterialToolbar>
 

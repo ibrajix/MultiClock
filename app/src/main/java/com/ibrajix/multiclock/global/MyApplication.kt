@@ -4,8 +4,10 @@ import android.app.Application
 import com.google.firebase.FirebaseApp
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.ibrajix.multiclock.BuildConfig.DEBUG
+import dagger.hilt.android.HiltAndroidApp
 import timber.log.Timber
 
+@HiltAndroidApp
 class MyApplication : Application() {
 
     override fun onCreate() {

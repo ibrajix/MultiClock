@@ -13,6 +13,7 @@ import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import com.ibrajix.multiclock.R
 import com.ibrajix.multiclock.databinding.FragmentAlarmBinding
+import timber.log.Timber
 
 class AlarmFragment : Fragment() {
 
@@ -68,9 +69,9 @@ class AlarmFragment : Fragment() {
                val formattedTime: String = when {
                    pickedHour > 12 -> {
                        if (pickedMinute < 10){
-                           "${materialTimePicker.hour - 12}: 0${materialTimePicker.minute} pm"
+                           "${materialTimePicker.hour - 12}:0${materialTimePicker.minute} pm"
                        } else {
-                           "${materialTimePicker.hour - 12}: ${materialTimePicker.minute} pm"
+                           "${materialTimePicker.hour - 12}:${materialTimePicker.minute} pm"
                        }
                    }
                    pickedHour == 12 -> {
@@ -95,8 +96,8 @@ class AlarmFragment : Fragment() {
                        }
                    }
                }
+               Timber.d(formattedTime)
            }
-
        }
     }
 
