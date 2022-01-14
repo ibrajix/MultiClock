@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 interface AlarmDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun addToFavorite(alarm: Alarm)
+    suspend fun insertAlarm(alarm: Alarm)
 
     @Transaction
     @Query("SELECT * FROM alarm_table ORDER BY id DESC")
@@ -15,6 +15,10 @@ interface AlarmDao {
 
     @Update
     suspend fun updateAlarm(alarm: Alarm)
+
+    @Transaction
+    @Query("SELECT * FROM alarm_table WHERE id = :id LIMIT 1")
+    fun getSingleAlarm(id: Int) : Flow<Alarm>
 
     @Query("DELETE FROM alarm_table WHERE id = :alarmId")
     suspend fun deleteAlarm(alarmId: Int)

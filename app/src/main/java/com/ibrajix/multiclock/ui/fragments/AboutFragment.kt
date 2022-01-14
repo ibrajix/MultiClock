@@ -12,6 +12,7 @@ import com.ibrajix.multiclock.databinding.FragmentAboutBinding
 class AboutFragment : Fragment() {
 
     lateinit var binding: FragmentAboutBinding
+    var replacedString: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
