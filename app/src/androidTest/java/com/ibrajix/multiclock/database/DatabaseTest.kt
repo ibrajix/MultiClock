@@ -8,8 +8,6 @@ import androidx.test.filters.SmallTest
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.take
-import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Before
@@ -19,23 +17,23 @@ import org.junit.runner.RunWith
 @ExperimentalCoroutinesApi
 @SmallTest
 @RunWith(AndroidJUnit4::class)
-class DbTest {
+class DatabaseTest {
 
-    private lateinit var db: Db
+    private lateinit var database: Database
     private lateinit var alarmDao: AlarmDao
 
     @Before
     fun setUp() {
         val context = ApplicationProvider.getApplicationContext<Context>()
-        db = Room.inMemoryDatabaseBuilder(context, Db::class.java)
+        database = Room.inMemoryDatabaseBuilder(context, Database::class.java)
             .allowMainThreadQueries()
             .build()
-        alarmDao = db.alarmDao()
+        alarmDao = database.alarmDao()
     }
 
     @After
     fun closeDb(){
-        db.close()
+        database.close()
     }
 
 

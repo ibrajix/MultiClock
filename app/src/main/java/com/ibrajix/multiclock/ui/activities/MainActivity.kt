@@ -9,8 +9,10 @@ import com.ibrajix.multiclock.R
 import com.ibrajix.multiclock.utils.Utility
 import com.ibrajix.multiclock.utils.Utility.isDarkTheme
 import com.ibrajix.multiclock.utils.Utility.transparentStatusBar
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
 

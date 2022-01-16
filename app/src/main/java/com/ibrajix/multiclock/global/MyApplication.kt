@@ -18,6 +18,7 @@ class MyApplication : Application() {
         if (DEBUG){
             Timber.plant(Timber.DebugTree())
         }
+
         else{
           Timber.plant(ReleaseTree())
         }

@@ -8,11 +8,11 @@ import androidx.room.PrimaryKey
 data class Alarm(
   @PrimaryKey(autoGenerate = true)
   @ColumnInfo(name = "id")
-  val id: Int,
+  val id: Int? = null,
   @ColumnInfo(name = "time")
   val time: String,
   @ColumnInfo(name = "status")
-  val status: Boolean,
+  val status: Boolean? = true,
   @ColumnInfo(name = "vibrate")
-  val vibrate: Boolean
+  val vibrate: Boolean? = true
 )

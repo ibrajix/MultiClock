@@ -2,7 +2,7 @@ package com.ibrajix.multiclock.di
 
 import android.content.Context
 import androidx.room.Room
-import com.ibrajix.multiclock.database.Db
+import com.ibrajix.multiclock.database.Database
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -16,13 +16,13 @@ object DatabaseModule {
 
     @Provides
     @Singleton
-    fun providesDatabase(@ApplicationContext context: Context): Db {
-        return Room.databaseBuilder(context, Db::class.java, "alarm_database")
+    fun providesDatabase(@ApplicationContext context: Context): Database {
+        return Room.databaseBuilder(context, Database::class.java, "alarm_database")
             .fallbackToDestructiveMigration()
             .build()
     }
 
     @Provides
-    fun providesAlarmDao(db: Db) = db.alarmDao()
+    fun providesAlarmDao(database: Database) = database.alarmDao()
 
 }

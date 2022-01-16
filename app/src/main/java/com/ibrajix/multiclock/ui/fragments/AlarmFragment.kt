@@ -7,17 +7,34 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import com.ibrajix.multiclock.R
+import com.ibrajix.multiclock.database.Alarm
+import com.ibrajix.multiclock.database.AlarmDao
+import com.ibrajix.multiclock.database.Database
 import com.ibrajix.multiclock.databinding.FragmentAlarmBinding
+import com.ibrajix.multiclock.ui.repository.AlarmRepository
+import com.ibrajix.multiclock.ui.viewmodel.AlarmViewModel
+import com.ibrajix.multiclock.ui.viewmodel.AlarmViewModelFactory
+import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class AlarmFragment : Fragment() {
 
-    lateinit var  binding: FragmentAlarmBinding
+    private lateinit var  binding: FragmentAlarmBinding
+
+    @Inject
+    lateinit var database: Database
+
+    private val alarmViewModel: AlarmViewModel by viewModels{
+        AlarmViewModelFactory(AlarmRepository(database))
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,6 +46,8 @@ class AlarmFragment : Fragment() {
     ): View {
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_alarm, container, false)
+        binding.lifecycleOwner = this
+        binding.alarmViewModel = alarmViewModel
         return binding.root
     }
 
@@ -39,7 +58,6 @@ class AlarmFragment : Fragment() {
 
 
     private fun startCoding(){
-
 
        binding.appBar.setOnMenuItemClickListener { menuItem->
            when(menuItem.itemId){
@@ -63,6 +81,7 @@ class AlarmFragment : Fragment() {
            materialTimePicker.show(parentFragmentManager, getString(R.string.alarm))
 
            materialTimePicker.addOnPositiveButtonClickListener {
+
                val pickedHour: Int = materialTimePicker.hour
                val pickedMinute: Int = materialTimePicker.minute
 
@@ -96,7 +115,14 @@ class AlarmFragment : Fragment() {
                        }
                    }
                }
-               Timber.d(formattedTime)
+
+               //add alarm to room database
+               val alarm = Alarm(
+                   time = formattedTime
+               )
+
+               alarmViewModel.createAlarm(alarm = alarm)
+
            }
        }
     }
