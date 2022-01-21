@@ -118,8 +118,11 @@ class AlarmFragment : Fragment() {
 
                 //add alarm to room database
                 val alarm = Alarm(
-                    time = formattedTime
+                    time = formattedTime,
+                    hour = pickedHour,
+                    minute = pickedMinute
                 )
+
                 alarmViewModel.createAlarm(alarm = alarm)
 
                 Toast.makeText(requireContext(), getString(R.string.alarm_set_for, DurationUtility.showAlarmToast(requireContext(), ringsIn(pickedHour, pickedMinute), false)), Toast.LENGTH_LONG).show()

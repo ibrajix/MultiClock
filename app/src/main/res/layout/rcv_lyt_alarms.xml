@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="alarmViewModel"
+            type="com.ibrajix.multiclock.database.Alarm" />
+    </data>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        app:cardCornerRadius="@dimen/card_corner_radius_size"
+        android:layout_margin="@dimen/rcv_lyt_margin_spacing">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/rcv_lyt_margin_spacing"
+            android:layout_marginTop="@dimen/rcv_lyt_margin_spacing"
+            android:padding="@dimen/rcv_lyt_padding_spacing">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/rcv_lyt_text_alarm_title_large"
+                android:textStyle="bold"
+                android:textColor="@color/text_on_card_selected"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="8:30pm" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+</layout>

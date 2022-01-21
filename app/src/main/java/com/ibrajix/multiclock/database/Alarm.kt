@@ -11,6 +11,10 @@ data class Alarm(
   val id: Int? = null,
   @ColumnInfo(name = "time")
   val time: String,
+  @ColumnInfo(name = "hour")
+  val hour: Int,
+  @ColumnInfo(name = "minute")
+  val minute: Int,
   @ColumnInfo(name = "status")
   val status: Boolean? = true,
   @ColumnInfo(name = "vibrate")

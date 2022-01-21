@@ -12,6 +12,7 @@
         <entry key="app/src/main/res/layout/fragment_clock.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_stopwatch.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_timer.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/rcv_lyt_alarms.xml" value="0.335" />
         <entry key="app/src/main/res/menu/about_menu.xml" value="0.2205128205128205" />
         <entry key="app/src/main/res/menu/menu.xml" value="0.2598958333333333" />
         <entry key="app/src/main/res/menu/navigation_menu.xml" value="0.14907407407407408" />
