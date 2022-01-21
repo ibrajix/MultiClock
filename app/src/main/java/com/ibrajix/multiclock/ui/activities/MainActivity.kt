@@ -2,13 +2,11 @@ package com.ibrajix.multiclock.ui.activities
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.ibrajix.multiclock.R
-import com.ibrajix.multiclock.utils.Utility
-import com.ibrajix.multiclock.utils.Utility.isDarkTheme
-import com.ibrajix.multiclock.utils.Utility.transparentStatusBar
+import com.ibrajix.multiclock.utils.UiUtility.isDarkTheme
+import com.ibrajix.multiclock.utils.UiUtility.transparentStatusBar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
 

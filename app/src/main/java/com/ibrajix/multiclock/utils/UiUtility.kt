@@ -8,9 +8,12 @@ import android.media.VolumeShaper
 import android.os.Build
 import android.view.View
 import android.content.res.Configuration
+import android.content.res.Resources
 import androidx.annotation.RequiresApi
+import com.ibrajix.multiclock.R
+import java.util.*
 
-object Utility {
+object UiUtility {
 
     //transparent status bar
     fun Activity.transparentStatusBar(){
