@@ -5,7 +5,7 @@
 
     <data>
         <variable
-            name="alarmViewModel"
+            name="alarm"
             type="com.ibrajix.multiclock.database.Alarm" />
     </data>
 
@@ -22,15 +22,25 @@
             android:layout_marginTop="@dimen/rcv_lyt_margin_spacing"
             android:padding="@dimen/rcv_lyt_padding_spacing">
 
-            <TextView
+            <com.google.android.material.textview.MaterialTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/rcv_lyt_text_alarm_title_large"
                 android:textStyle="bold"
+                android:text="@{alarm.time}"
                 android:textColor="@color/text_on_card_selected"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="8:30pm" />
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:checked="true"
+                android:layout_marginEnd="@dimen/rcv_lyt_margin_spacing"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

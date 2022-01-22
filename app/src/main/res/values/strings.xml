@@ -55,6 +55,7 @@
     <string name="abbrev_less_than_one_minute">&lt;1m</string>
 
     <string name="upcoming_alarm_dismissed">%1$s alarm dismissed.</string>
+    <string name="no_alarm_yet">No alarm yet</string>
     <!-- ======================================================================================= -->
 
 </resources>

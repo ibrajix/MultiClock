@@ -1,13 +1,16 @@
 package com.ibrajix.multiclock.ui.fragments
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
@@ -15,13 +18,14 @@ import com.ibrajix.multiclock.R
 import com.ibrajix.multiclock.database.Alarm
 import com.ibrajix.multiclock.database.Database
 import com.ibrajix.multiclock.databinding.FragmentAlarmBinding
-import com.ibrajix.multiclock.ui.repository.AlarmRepository
+import com.ibrajix.multiclock.ui.adapters.AlarmAdapter
 import com.ibrajix.multiclock.ui.viewmodel.AlarmViewModel
-import com.ibrajix.multiclock.ui.viewmodel.AlarmViewModelFactory
-import com.ibrajix.multiclock.utils.AlarmUtility
 import com.ibrajix.multiclock.utils.AlarmUtility.ringsIn
 import com.ibrajix.multiclock.utils.DurationUtility
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -32,9 +36,9 @@ class AlarmFragment : Fragment() {
     @Inject
     lateinit var database: Database
 
-    private val alarmViewModel: AlarmViewModel by viewModels{
-        AlarmViewModelFactory(AlarmRepository(database))
-    }
+    lateinit var alarmAdapter: AlarmAdapter
+
+    private val alarmViewModel: AlarmViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,11 +57,47 @@ class AlarmFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        startCoding()
+        initItems()
+        setUpClickListeners()
+        setUpObserver()
     }
 
 
-    private fun startCoding() {
+    private fun setUpObserver(){
+
+        alarmViewModel.getAllAlarms()
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                alarmViewModel.getAllAlarmsResult.collect {
+                    Timber.d(it.toString())
+                    alarmAdapter.submitList(it)
+                    if(it.isEmpty()){
+                        binding.txtNoAlarm.visibility = View.VISIBLE
+                    }
+                    else {
+                        binding.txtNoAlarm.visibility = View.GONE
+                    }
+                }
+            }
+        }
+
+    }
+
+    private fun initItems(){
+
+        alarmAdapter = AlarmAdapter(onClickListener = AlarmAdapter.OnAlarmClickListener{
+
+        })
+
+        binding.rcvAlarms.apply {
+            adapter = alarmAdapter
+        }
+
+    }
+
+
+    private fun setUpClickListeners(){
 
         binding.appBar.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
@@ -88,30 +128,30 @@ class AlarmFragment : Fragment() {
                 val formattedTime: String = when {
                     pickedHour > 12 -> {
                         if (pickedMinute < 10) {
-                            "${materialTimePicker.hour - 12}:0${materialTimePicker.minute} pm"
+                            "${materialTimePicker.hour - 12}:0${materialTimePicker.minute}pm"
                         } else {
-                            "${materialTimePicker.hour - 12}:${materialTimePicker.minute} pm"
+                            "${materialTimePicker.hour - 12}:${materialTimePicker.minute}pm"
                         }
                     }
                     pickedHour == 12 -> {
                         if (pickedMinute < 10) {
-                            "${materialTimePicker.hour}:0${materialTimePicker.minute} pm"
+                            "${materialTimePicker.hour}:0${materialTimePicker.minute}pm"
                         } else {
-                            "${materialTimePicker.hour}:${materialTimePicker.minute} pm"
+                            "${materialTimePicker.hour}:${materialTimePicker.minute}pm"
                         }
                     }
                     pickedHour == 0 -> {
                         if (pickedMinute < 10) {
-                            "${materialTimePicker.hour + 12}:0${materialTimePicker.minute} am"
+                            "${materialTimePicker.hour + 12}:0${materialTimePicker.minute}am"
                         } else {
-                            "${materialTimePicker.hour + 12}:${materialTimePicker.minute} am"
+                            "${materialTimePicker.hour + 12}:${materialTimePicker.minute}am"
                         }
                     }
                     else -> {
                         if (pickedMinute < 10) {
-                            "${materialTimePicker.hour}:0${materialTimePicker.minute} am"
+                            "${materialTimePicker.hour}:0${materialTimePicker.minute}am"
                         } else {
-                            "${materialTimePicker.hour}:${materialTimePicker.minute} am"
+                            "${materialTimePicker.hour}:${materialTimePicker.minute}am"
                         }
                     }
                 }
@@ -129,5 +169,11 @@ class AlarmFragment : Fragment() {
 
             }
         }
+    }
+
+
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
     }
 }

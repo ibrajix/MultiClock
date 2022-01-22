@@ -8,10 +8,13 @@ import com.google.firebase.crashlytics.internal.common.CrashlyticsCore
 import com.ibrajix.multiclock.database.Alarm
 import com.ibrajix.multiclock.database.AlarmDao
 import com.ibrajix.multiclock.ui.repository.AlarmRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class AlarmViewModel(private val alarmRepository: AlarmRepository) : ViewModel() {
+@HiltViewModel
+class AlarmViewModel @Inject constructor (private val alarmRepository: AlarmRepository) : ViewModel() {
 
 
     fun createAlarm(alarm: Alarm){
@@ -23,7 +26,7 @@ class AlarmViewModel(private val alarmRepository: AlarmRepository) : ViewModel()
     private val _getAllAlarmsResult = MutableSharedFlow<List<Alarm>>()
     val getAllAlarmsResult : SharedFlow<List<Alarm>> = _getAllAlarmsResult
 
-    fun getAllAlarms(alarm: Alarm){
+    fun getAllAlarms(){
         viewModelScope.launch {
             alarmRepository.getAllAlarms
                 .catch {e->
@@ -41,11 +44,4 @@ class AlarmViewModel(private val alarmRepository: AlarmRepository) : ViewModel()
         }
     }
 
-}
-
-@Suppress("UNCHECKED_CAST")
-class AlarmViewModelFactory(private val alarmRepository: AlarmRepository) : ViewModelProvider.NewInstanceFactory(){
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        return AlarmViewModel(alarmRepository) as T
-    }
 }
