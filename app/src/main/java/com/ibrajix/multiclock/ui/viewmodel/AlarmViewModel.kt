@@ -44,4 +44,10 @@ class AlarmViewModel @Inject constructor (private val alarmRepository: AlarmRepo
         }
     }
 
+    fun updateAlarmStatus(status: Boolean, alarmId: Int){
+        viewModelScope.launch {
+            alarmRepository.updateAlarmStatus(status, alarmId)
+        }
+    }
+
 }

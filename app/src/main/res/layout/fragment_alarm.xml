@@ -12,6 +12,7 @@
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:id="@+id/alarmFragment"
         tools:context=".ui.fragments.AlarmFragment">
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton

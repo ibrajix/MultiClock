@@ -90,6 +90,10 @@ class AlarmFragment : Fragment() {
 
         })
 
+        AlarmAdapter.AlarmViewHolder.setOnAlarmChangeStatusListener { alarm, status ->
+            alarm.id?.let { alarmViewModel.updateAlarmStatus(status, it) }
+        }
+
         binding.rcvAlarms.apply {
             adapter = alarmAdapter
         }
@@ -172,8 +176,8 @@ class AlarmFragment : Fragment() {
     }
 
 
-
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
     }
+
 }

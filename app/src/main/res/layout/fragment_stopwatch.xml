@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/stopwatchFragment"
     tools:context=".ui.fragments.StopwatchFragment">
 
     <!-- TODO: Update blank fragment layout -->

@@ -4,9 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="alarm"
             type="com.ibrajix.multiclock.database.Alarm" />
+
     </data>
 
     <androidx.cardview.widget.CardView
@@ -28,15 +30,15 @@
                 android:textSize="@dimen/rcv_lyt_text_alarm_title_large"
                 android:textStyle="bold"
                 android:text="@{alarm.time}"
-                android:textColor="@color/text_on_card_selected"
+                android:textColor="@{alarm.status ? @color/text_on_card_selected : @color/text_on_card_not_selected }"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="8:30pm" />
 
             <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/switch_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:checked="true"
                 android:layout_marginEnd="@dimen/rcv_lyt_margin_spacing"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
