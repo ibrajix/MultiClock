@@ -56,6 +56,10 @@
 
     <string name="upcoming_alarm_dismissed">%1$s alarm dismissed.</string>
     <string name="no_alarm_yet">No alarm yet</string>
+    <string name="need_permission">We need alarm permission</string>
+    <string name="permission_helper">In order to be able to use alarms, you need to allow this app to set alarms and reminders</string>
+    <string name="allow">Allow</string>
+    <string name="later">Later</string>
     <!-- ======================================================================================= -->
 
 </resources>

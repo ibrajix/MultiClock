@@ -1,9 +1,21 @@
 package com.ibrajix.multiclock.utils
 
+import android.content.Intent
+import android.os.Build
+import android.provider.Settings
+import android.widget.Toast
+import androidx.annotation.RequiresApi
+import androidx.fragment.app.Fragment
+import com.google.android.material.timepicker.MaterialTimePicker
+import com.google.android.material.timepicker.TimeFormat
+import com.ibrajix.multiclock.R
+import com.ibrajix.multiclock.database.Alarm
+import dev.shreyaspatil.MaterialDialog.MaterialDialog
 import java.util.*
 import java.util.Calendar.SATURDAY
 import java.util.Calendar.SUNDAY
 import java.util.concurrent.TimeUnit
+import kotlin.math.min
 
 object AlarmUtility {
 
@@ -90,6 +102,96 @@ object AlarmUtility {
 
     fun ringsIn(hour: Int, minutes: Int): Long {
         return ringsAt(hour, minutes) - System.currentTimeMillis()
+    }
+
+
+    fun Fragment.showPickerAndSetAlarm(callback :(Alarm) -> Unit) {
+
+        val materialTimePicker: MaterialTimePicker = MaterialTimePicker.Builder()
+            .setTitleText(requireContext().getString(R.string.select_time))
+            .setHour(12)
+            .setMinute(10)
+            .setTimeFormat(TimeFormat.CLOCK_12H)
+            .build()
+
+        materialTimePicker.show(parentFragmentManager, getString(R.string.alarm))
+
+        materialTimePicker.addOnPositiveButtonClickListener {
+
+            val pickedHour: Int = materialTimePicker.hour
+            val pickedMinute: Int = materialTimePicker.minute
+
+            val formattedTime: String = when {
+                pickedHour > 12 -> {
+                    if (pickedMinute < 10) {
+                        "${materialTimePicker.hour - 12}:0${materialTimePicker.minute}pm"
+                    } else {
+                        "${materialTimePicker.hour - 12}:${materialTimePicker.minute}pm"
+                    }
+                }
+                pickedHour == 12 -> {
+                    if (pickedMinute < 10) {
+                        "${materialTimePicker.hour}:0${materialTimePicker.minute}pm"
+                    } else {
+                        "${materialTimePicker.hour}:${materialTimePicker.minute}pm"
+                    }
+                }
+                pickedHour == 0 -> {
+                    if (pickedMinute < 10) {
+                        "${materialTimePicker.hour + 12}:0${materialTimePicker.minute}am"
+                    } else {
+                        "${materialTimePicker.hour + 12}:${materialTimePicker.minute}am"
+                    }
+                }
+                else -> {
+                    if (pickedMinute < 10) {
+                        "${materialTimePicker.hour}:0${materialTimePicker.minute}am"
+                    } else {
+                        "${materialTimePicker.hour}:${materialTimePicker.minute}am"
+                    }
+                }
+            }
+
+            val alarm = Alarm(
+                time = formattedTime,
+                hour = pickedHour,
+                minute = pickedMinute
+            )
+
+            callback(alarm)
+
+            Toast.makeText(requireContext(), getString(R.string.alarm_set_for, DurationUtility.showAlarmToast(requireContext(), ringsIn(pickedHour, pickedMinute), false)), Toast.LENGTH_LONG).show()
+        }
+
+    }
+
+    //show material dialog
+    @RequiresApi(Build.VERSION_CODES.S)
+    fun Fragment.showMaterialDialog(){
+
+        val mDialog = MaterialDialog.Builder(requireActivity())
+            .setTitle(requireContext().getString(R.string.need_permission))
+            .setMessage(requireContext().getString(R.string.permission_helper))
+            .setCancelable(false)
+            .setAnimation(R.raw.permission)
+            .setPositiveButton(
+                requireContext().getString(R.string.allow)
+            ) { dialogInterface, which ->
+                //on click, navigate to settings screen
+                val intent = Intent().apply {
+                    action = Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM
+                }
+                startActivity(intent)
+            }
+            .setNegativeButton(
+                requireContext().getString(R.string.later)
+            ){dialogInterface, which ->
+                //on click cancel
+                dialogInterface.dismiss()
+            }
+            .build()
+        mDialog.show()
+
     }
 
 }

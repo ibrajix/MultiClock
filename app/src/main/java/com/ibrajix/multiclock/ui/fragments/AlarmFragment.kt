@@ -1,10 +1,12 @@
 package com.ibrajix.multiclock.ui.fragments
 
+import android.app.AlarmManager
+import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -12,26 +14,24 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import com.google.android.material.timepicker.MaterialTimePicker
-import com.google.android.material.timepicker.TimeFormat
 import com.ibrajix.multiclock.R
-import com.ibrajix.multiclock.database.Alarm
 import com.ibrajix.multiclock.database.Database
 import com.ibrajix.multiclock.databinding.FragmentAlarmBinding
 import com.ibrajix.multiclock.ui.adapters.AlarmAdapter
 import com.ibrajix.multiclock.ui.viewmodel.AlarmViewModel
-import com.ibrajix.multiclock.utils.AlarmUtility.ringsIn
-import com.ibrajix.multiclock.utils.DurationUtility
+import com.ibrajix.multiclock.utils.AlarmUtility.showMaterialDialog
+import com.ibrajix.multiclock.utils.AlarmUtility.showPickerAndSetAlarm
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
+
 @AndroidEntryPoint
 class AlarmFragment : Fragment() {
 
-    private lateinit var  binding: FragmentAlarmBinding
+    private lateinit var binding: FragmentAlarmBinding
 
     @Inject
     lateinit var database: Database
@@ -63,7 +63,7 @@ class AlarmFragment : Fragment() {
     }
 
 
-    private fun setUpObserver(){
+    private fun setUpObserver() {
 
         alarmViewModel.getAllAlarms()
 
@@ -72,10 +72,9 @@ class AlarmFragment : Fragment() {
                 alarmViewModel.getAllAlarmsResult.collect {
                     Timber.d(it.toString())
                     alarmAdapter.submitList(it)
-                    if(it.isEmpty()){
+                    if (it.isEmpty()) {
                         binding.txtNoAlarm.visibility = View.VISIBLE
-                    }
-                    else {
+                    } else {
                         binding.txtNoAlarm.visibility = View.GONE
                     }
                 }
@@ -84,14 +83,25 @@ class AlarmFragment : Fragment() {
 
     }
 
-    private fun initItems(){
+    private fun initItems() {
 
-        alarmAdapter = AlarmAdapter(onClickListener = AlarmAdapter.OnAlarmClickListener{
+        alarmAdapter = AlarmAdapter(onClickListener = AlarmAdapter.OnAlarmClickListener {
 
         })
 
         AlarmAdapter.AlarmViewHolder.setOnAlarmChangeStatusListener { alarm, status ->
+
             alarm.id?.let { alarmViewModel.updateAlarmStatus(status, it) }
+
+            //if status is true, set alarm
+            if (status) {
+
+            } else {
+                //remove alarm
+
+            }
+
+
         }
 
         binding.rcvAlarms.apply {
@@ -100,8 +110,7 @@ class AlarmFragment : Fragment() {
 
     }
 
-
-    private fun setUpClickListeners(){
+    private fun setUpClickListeners() {
 
         binding.appBar.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
@@ -116,61 +125,23 @@ class AlarmFragment : Fragment() {
 
         binding.floatingActionButton.setOnClickListener {
 
-            val materialTimePicker: MaterialTimePicker = MaterialTimePicker.Builder()
-                .setTitleText(requireContext().getString(R.string.select_time))
-                .setHour(12)
-                .setMinute(10)
-                .setTimeFormat(TimeFormat.CLOCK_12H)
-                .build()
-            materialTimePicker.show(parentFragmentManager, getString(R.string.alarm))
+            val alarmManager: AlarmManager =
+                activity?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
-            materialTimePicker.addOnPositiveButtonClickListener {
-
-                val pickedHour: Int = materialTimePicker.hour
-                val pickedMinute: Int = materialTimePicker.minute
-
-                val formattedTime: String = when {
-                    pickedHour > 12 -> {
-                        if (pickedMinute < 10) {
-                            "${materialTimePicker.hour - 12}:0${materialTimePicker.minute}pm"
-                        } else {
-                            "${materialTimePicker.hour - 12}:${materialTimePicker.minute}pm"
-                        }
-                    }
-                    pickedHour == 12 -> {
-                        if (pickedMinute < 10) {
-                            "${materialTimePicker.hour}:0${materialTimePicker.minute}pm"
-                        } else {
-                            "${materialTimePicker.hour}:${materialTimePicker.minute}pm"
-                        }
-                    }
-                    pickedHour == 0 -> {
-                        if (pickedMinute < 10) {
-                            "${materialTimePicker.hour + 12}:0${materialTimePicker.minute}am"
-                        } else {
-                            "${materialTimePicker.hour + 12}:${materialTimePicker.minute}am"
-                        }
-                    }
-                    else -> {
-                        if (pickedMinute < 10) {
-                            "${materialTimePicker.hour}:0${materialTimePicker.minute}am"
-                        } else {
-                            "${materialTimePicker.hour}:${materialTimePicker.minute}am"
-                        }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                if (alarmManager.canScheduleExactAlarms()) {
+                    showPickerAndSetAlarm {
+                        alarmViewModel.createAlarm(it)
                     }
                 }
-
-                //add alarm to room database
-                val alarm = Alarm(
-                    time = formattedTime,
-                    hour = pickedHour,
-                    minute = pickedMinute
-                )
-
-                alarmViewModel.createAlarm(alarm = alarm)
-
-                Toast.makeText(requireContext(), getString(R.string.alarm_set_for, DurationUtility.showAlarmToast(requireContext(), ringsIn(pickedHour, pickedMinute), false)), Toast.LENGTH_LONG).show()
-
+                else {
+                    //show a dialog for user to navigate to settings and turn on alarms and reminder
+                    showMaterialDialog()
+                }
+            } else {
+                showPickerAndSetAlarm {
+                    alarmViewModel.createAlarm(it)
+                }
             }
         }
     }
