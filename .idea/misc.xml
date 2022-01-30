@@ -7,6 +7,7 @@
         <entry key="app/src/main/res/drawable/ic_bell.xml" value="0.15052083333333333" />
         <entry key="app/src/main/res/drawable/ic_clock.xml" value="0.15052083333333333" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.11" />
+        <entry key="app/src/main/res/layout/activity_test.xml" value="0.18072916666666666" />
         <entry key="app/src/main/res/layout/fragment_about.xml" value="0.165" />
         <entry key="app/src/main/res/layout/fragment_alarm.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_clock.xml" value="0.1" />

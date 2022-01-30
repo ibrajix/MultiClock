@@ -26,4 +26,8 @@ interface AlarmDao {
     @Query("UPDATE alarm_table SET status = :status WHERE id = :alarmId")
     suspend fun updateAlarmStatus(status: Boolean, alarmId: Int)
 
+    @Transaction
+    @Query("SELECT * FROM alarm_table WHERE status = :status")
+    fun getAlarmWhoseStatusIsTrue(status: Boolean = true) : Flow<List<Alarm>>
+
 }

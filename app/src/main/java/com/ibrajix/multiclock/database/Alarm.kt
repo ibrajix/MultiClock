@@ -18,5 +18,7 @@ data class Alarm(
   @ColumnInfo(name = "status")
   val status: Boolean? = true,
   @ColumnInfo(name = "vibrate")
-  val vibrate: Boolean? = true
+  val vibrate: Boolean? = true,
+  @ColumnInfo(name = "timeInMilliSecond")
+  val timeInMilliSecond: Long
 )

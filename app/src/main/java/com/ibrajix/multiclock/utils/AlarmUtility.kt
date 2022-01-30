@@ -1,11 +1,14 @@
 package com.ibrajix.multiclock.utils
 
+import android.app.AlarmManager
+import android.app.PendingIntent
 import android.content.Intent
 import android.os.Build
 import android.provider.Settings
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.LifecycleService
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import com.ibrajix.multiclock.R
@@ -18,6 +21,8 @@ import java.util.concurrent.TimeUnit
 import kotlin.math.min
 
 object AlarmUtility {
+
+    val intent: Intent? = null
 
     private val recurringDays = BooleanArray(7)
 
@@ -121,6 +126,20 @@ object AlarmUtility {
             val pickedHour: Int = materialTimePicker.hour
             val pickedMinute: Int = materialTimePicker.minute
 
+            val calendar = Calendar.getInstance()
+            calendar[Calendar.HOUR_OF_DAY] = pickedHour
+            calendar[Calendar.MINUTE] = pickedMinute
+            calendar[Calendar.SECOND] = 0
+            calendar[Calendar.MILLISECOND] = 0
+            val timeInMilliSecond = calendar.timeInMillis
+
+
+            // if alarm time has already passed, increment day by 1
+            if (calendar.timeInMillis <= System.currentTimeMillis()) {
+                calendar[Calendar.DAY_OF_MONTH] = calendar[Calendar.DAY_OF_MONTH] + 1
+            }
+
+
             val formattedTime: String = when {
                 pickedHour > 12 -> {
                     if (pickedMinute < 10) {
@@ -155,7 +174,8 @@ object AlarmUtility {
             val alarm = Alarm(
                 time = formattedTime,
                 hour = pickedHour,
-                minute = pickedMinute
+                minute = pickedMinute,
+                timeInMilliSecond = timeInMilliSecond
             )
 
             callback(alarm)
