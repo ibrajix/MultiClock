@@ -2,11 +2,14 @@ package com.ibrajix.multiclock.utils
 
 import android.app.AlarmManager
 import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.os.Vibrator
 import android.provider.Settings
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleService
 import com.google.android.material.timepicker.MaterialTimePicker

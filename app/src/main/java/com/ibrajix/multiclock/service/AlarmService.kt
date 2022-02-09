@@ -39,9 +39,6 @@ class AlarmService : Service() {
                 .setSmallIcon(R.drawable.ic_bell)
                 .setContentTitle(getString(R.string.alarm_running))
                 .setAutoCancel(true)
-                .setDefaults(NotificationCompat.DEFAULT_ALL)
-                .setDefaults(NotificationCompat.DEFAULT_SOUND)
-                .setDefaults(NotificationCompat.DEFAULT_VIBRATE)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .addAction(R.drawable.ic_stop_watch,getString(R.string.stop), pendingIntent)
                 .setContentIntent(pendingIntent)
@@ -52,7 +49,7 @@ class AlarmService : Service() {
             r.play()
 
 
-            val pattern = longArrayOf(0, 100, 1000)
+            val pattern = longArrayOf(1500, 800, 800, 800)
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 vibrator?.vibrate(VibrationEffect.createWaveform(pattern, 0))
