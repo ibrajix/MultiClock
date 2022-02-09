@@ -3,9 +3,11 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="app/src/main/res/drawable/btn_with_stroke.xml" value="0.2037037037037037" />
         <entry key="app/src/main/res/drawable/ic_add.xml" value="0.2604166666666667" />
         <entry key="app/src/main/res/drawable/ic_bell.xml" value="0.15052083333333333" />
         <entry key="app/src/main/res/drawable/ic_clock.xml" value="0.15052083333333333" />
+        <entry key="app/src/main/res/layout/activity_alarm_clicked.xml" value="0.191064453125" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.11" />
         <entry key="app/src/main/res/layout/activity_test.xml" value="0.18072916666666666" />
         <entry key="app/src/main/res/layout/fragment_about.xml" value="0.165" />

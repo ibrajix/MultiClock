@@ -57,12 +57,18 @@ class AlarmRescheduleService : LifecycleService() {
 
 
                         //reschedule alarm
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            // Ensure the alarm fires even if the device is dozing.
-                            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, alarm.timeInMilliSecond, alarmPendingIntent)
+                       /* if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            //Ensure the alarm fires even if the device is dozing.
+                            val alarmClockInfo = AlarmManager.AlarmClockInfo(alarm.timeInMilliSecond, null)
+                            alarmManager.setAlarmClock(alarmClockInfo, pendingIntent)
                         } else {
-                            alarmManager.setExact(AlarmManager.RTC_WAKEUP, alarm.timeInMilliSecond, alarmPendingIntent)
-                        }
+                            alarmManager.setExact(
+                                AlarmManager.RTC_WAKEUP,
+                                alarm.timeInMilliSecond,
+                                pendingIntent
+                            )
+                        }*/
+
                     }
                 }
             }

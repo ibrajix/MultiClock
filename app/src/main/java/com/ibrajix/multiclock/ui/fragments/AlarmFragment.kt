@@ -1,5 +1,6 @@
 package com.ibrajix.multiclock.ui.fragments
 
+import android.annotation.SuppressLint
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
@@ -19,6 +20,8 @@ import androidx.navigation.fragment.findNavController
 import com.ibrajix.multiclock.R
 import com.ibrajix.multiclock.database.Database
 import com.ibrajix.multiclock.databinding.FragmentAlarmBinding
+import com.ibrajix.multiclock.service.AlarmReceiver
+import com.ibrajix.multiclock.service.AlarmService
 import com.ibrajix.multiclock.ui.activities.AlarmClickedActivity
 import com.ibrajix.multiclock.ui.adapters.AlarmAdapter
 import com.ibrajix.multiclock.ui.viewmodel.AlarmViewModel
@@ -69,6 +72,7 @@ class AlarmFragment : Fragment() {
     }
 
 
+    @SuppressLint("UnsafeRepeatOnLifecycleDetector")
     private fun setUpObserver() {
 
         alarmViewModel.getAllAlarms()
@@ -96,18 +100,13 @@ class AlarmFragment : Fragment() {
         })
 
         AlarmAdapter.AlarmViewHolder.setOnAlarmChangeStatusListener { alarm, status ->
-
             alarm.id?.let { alarmViewModel.updateAlarmStatus(status, it) }
-
             //if status is true, set alarm
             if (status) {
 
             } else {
                 //remove alarm
-
             }
-
-
         }
 
         binding.rcvAlarms.apply {
@@ -141,11 +140,16 @@ class AlarmFragment : Fragment() {
 
                         //set alarm
                         val activityIntent = Intent(requireContext(), AlarmClickedActivity::class.java)
+
+                        val serviceIntent = Intent(requireContext(), AlarmService::class.java)
+
+                        val broadcastReceiverIntent = Intent(requireContext(), AlarmReceiver::class.java)
+
                         activityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                         activityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                         activityIntent.putExtra(ALARM_INTENT_EXTRA, alarm.time)
 
-                        pendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                       /* pendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                             PendingIntent.getActivity(
                                 requireContext(),
                                 0,
@@ -157,7 +161,24 @@ class AlarmFragment : Fragment() {
                                 requireContext(),
                                 0, activityIntent, PendingIntent.FLAG_UPDATE_CURRENT
                             )
+                        }*/
+
+                        pendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            PendingIntent.getBroadcast(
+                                requireContext(),
+                                alarm.id?:0,
+                                broadcastReceiverIntent,
+                                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                            )
+                        } else {
+                            PendingIntent.getBroadcast(
+                                requireContext(),
+                                alarm.id?:0,
+                                broadcastReceiverIntent,
+                                PendingIntent.FLAG_UPDATE_CURRENT
+                            )
                         }
+
 
                         //reschedule alarm
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -184,11 +205,14 @@ class AlarmFragment : Fragment() {
 
                     //set alarm
                     val activityIntent = Intent(requireContext(), AlarmClickedActivity::class.java)
+                    val serviceIntent = Intent(requireContext(), AlarmService::class.java)
+                    val broadcastReceiverIntent = Intent(requireContext(), AlarmReceiver::class.java)
+
                     activityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                     activityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     activityIntent.putExtra(ALARM_INTENT_EXTRA, alarm.time)
 
-                    pendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    /*pendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                         PendingIntent.getActivity(
                             requireContext(),
                             0,
@@ -199,6 +223,22 @@ class AlarmFragment : Fragment() {
                         PendingIntent.getActivity(
                             requireContext(),
                             0, activityIntent, PendingIntent.FLAG_UPDATE_CURRENT
+                        )
+                    }*/
+
+                    pendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        PendingIntent.getBroadcast(
+                            requireContext(),
+                            alarm.id?:0,
+                            broadcastReceiverIntent,
+                            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                        )
+                    } else {
+                        PendingIntent.getBroadcast(
+                            requireContext(),
+                            alarm.id?:0,
+                            broadcastReceiverIntent,
+                            PendingIntent.FLAG_UPDATE_CURRENT
                         )
                     }
 

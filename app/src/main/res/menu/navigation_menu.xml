@@ -5,13 +5,11 @@
         android:id="@+id/alarmFragment"
         android:title="@string/alarm"
         android:enabled="true"
-        android:menuCategory="secondary"
         android:icon="@drawable/ic_bell"/>
 
     <item
         android:id="@+id/clockFragment"
         android:enabled="true"
-        android:menuCategory="secondary"
         android:icon="@drawable/ic_clock"
         android:title="@string/clock" />
 
@@ -19,14 +17,12 @@
         android:enabled="true"
         android:id="@+id/timerFragment"
         android:icon="@drawable/ic_timer"
-        android:menuCategory="secondary"
         android:title="@string/timer" />
 
     <item
         android:enabled="true"
         android:id="@+id/stopwatchFragment"
         android:icon="@drawable/ic_stop_watch"
-        android:menuCategory="secondary"
         android:title="@string/stopwatch" />
 
 </menu>

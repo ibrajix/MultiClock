@@ -44,6 +44,9 @@ class DatabaseTest {
             id = 1,
             status = true,
             time = "1234",
+            hour = 2374,
+            minute = 3435,
+            timeInMilliSecond = 2444,
             vibrate = true
         )
 
@@ -60,6 +63,9 @@ class DatabaseTest {
             id = 2,
             status = false,
             time = "12344",
+            hour = 2374,
+            minute = 3435,
+            timeInMilliSecond = 2444,
             vibrate = true
         )
 
@@ -69,6 +75,9 @@ class DatabaseTest {
             id = 2,
             status = true,
             time = "1344455",
+            hour = 2374,
+            minute = 3435,
+            timeInMilliSecond = 2444,
             vibrate = false
         )
 
@@ -87,6 +96,9 @@ class DatabaseTest {
             id = 1,
             status = true,
             time = "1234",
+            hour = 2374,
+            minute = 3435,
+            timeInMilliSecond = 2444,
             vibrate = false
         )
 
