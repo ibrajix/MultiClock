@@ -54,6 +54,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="80dp"
             android:text="@string/stop"
+            android:textColor="@color/bg"
             app:layout_constraintBottom_toBottomOf="@+id/btn_snooze"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"

@@ -21,8 +21,6 @@ import com.ibrajix.multiclock.R
 import com.ibrajix.multiclock.database.Database
 import com.ibrajix.multiclock.databinding.FragmentAlarmBinding
 import com.ibrajix.multiclock.service.AlarmReceiver
-import com.ibrajix.multiclock.service.AlarmService
-import com.ibrajix.multiclock.ui.activities.AlarmClickedActivity
 import com.ibrajix.multiclock.ui.adapters.AlarmAdapter
 import com.ibrajix.multiclock.ui.viewmodel.AlarmViewModel
 import com.ibrajix.multiclock.utils.AlarmUtility.showMaterialDialog
@@ -48,6 +46,8 @@ class AlarmFragment : Fragment() {
     private val alarmViewModel: AlarmViewModel by viewModels()
 
     lateinit var pendingIntent: PendingIntent
+
+    var broadcastCode = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -115,6 +115,7 @@ class AlarmFragment : Fragment() {
 
     }
 
+    @SuppressLint("UnspecifiedImmutableFlag")
     private fun setUpClickListeners() {
 
         binding.appBar.setOnMenuItemClickListener { menuItem ->
@@ -134,46 +135,27 @@ class AlarmFragment : Fragment() {
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 if (alarmManager.canScheduleExactAlarms()) {
+
                     showPickerAndSetAlarm { alarm ->
 
                         alarmViewModel.createAlarm(alarm)
 
-                        //set alarm
-                        val activityIntent = Intent(requireContext(), AlarmClickedActivity::class.java)
-
-                        val serviceIntent = Intent(requireContext(), AlarmService::class.java)
-
                         val broadcastReceiverIntent = Intent(requireContext(), AlarmReceiver::class.java)
+                        broadcastReceiverIntent.putExtra(ALARM_INTENT_EXTRA, alarm.time)
 
-                        activityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                        activityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                        activityIntent.putExtra(ALARM_INTENT_EXTRA, alarm.time)
-
-                       /* pendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            PendingIntent.getActivity(
-                                requireContext(),
-                                0,
-                                activityIntent,
-                                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-                            )
-                        } else {
-                            PendingIntent.getActivity(
-                                requireContext(),
-                                0, activityIntent, PendingIntent.FLAG_UPDATE_CURRENT
-                            )
-                        }*/
+                        broadcastCode++
 
                         pendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                             PendingIntent.getBroadcast(
                                 requireContext(),
-                                alarm.id?:0,
+                                broadcastCode,
                                 broadcastReceiverIntent,
                                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
                             )
                         } else {
                             PendingIntent.getBroadcast(
                                 requireContext(),
-                                alarm.id?:0,
+                                broadcastCode,
                                 broadcastReceiverIntent,
                                 PendingIntent.FLAG_UPDATE_CURRENT
                             )
@@ -182,9 +164,11 @@ class AlarmFragment : Fragment() {
 
                         //reschedule alarm
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            //Ensure the alarm fires even if the device is dozing.
+
+                            //ensure the alarm fires even if the device is dozing.
                             val alarmClockInfo = AlarmManager.AlarmClockInfo(alarm.timeInMilliSecond, null)
                             alarmManager.setAlarmClock(alarmClockInfo, pendingIntent)
+
                         } else {
                             alarmManager.setExact(
                                 AlarmManager.RTC_WAKEUP,
@@ -195,48 +179,33 @@ class AlarmFragment : Fragment() {
 
                     }
                 } else {
+
                     //show a dialog for user to navigate to settings and turn on alarms and reminder
                     showMaterialDialog()
+
                 }
             } else {
                 showPickerAndSetAlarm { alarm->
 
                     alarmViewModel.createAlarm(alarm)
 
+                    broadcastCode++
+
                     //set alarm
-                    val activityIntent = Intent(requireContext(), AlarmClickedActivity::class.java)
-                    val serviceIntent = Intent(requireContext(), AlarmService::class.java)
                     val broadcastReceiverIntent = Intent(requireContext(), AlarmReceiver::class.java)
-
-                    activityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                    activityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    activityIntent.putExtra(ALARM_INTENT_EXTRA, alarm.time)
-
-                    /*pendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        PendingIntent.getActivity(
-                            requireContext(),
-                            0,
-                            activityIntent,
-                            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-                        )
-                    } else {
-                        PendingIntent.getActivity(
-                            requireContext(),
-                            0, activityIntent, PendingIntent.FLAG_UPDATE_CURRENT
-                        )
-                    }*/
+                    broadcastReceiverIntent.putExtra(ALARM_INTENT_EXTRA, alarm.time)
 
                     pendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                         PendingIntent.getBroadcast(
                             requireContext(),
-                            alarm.id?:0,
+                            broadcastCode,
                             broadcastReceiverIntent,
                             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
                         )
                     } else {
                         PendingIntent.getBroadcast(
                             requireContext(),
-                            alarm.id?:0,
+                            broadcastCode,
                             broadcastReceiverIntent,
                             PendingIntent.FLAG_UPDATE_CURRENT
                         )
@@ -244,9 +213,11 @@ class AlarmFragment : Fragment() {
 
                     //reschedule alarm
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        //Ensure the alarm fires even if the device is dozing.
+
+                        //ensure the alarm fires even if the device is dozing.
                         val alarmClockInfo = AlarmManager.AlarmClockInfo(alarm.timeInMilliSecond, null)
                         alarmManager.setAlarmClock(alarmClockInfo, pendingIntent)
+
                     } else {
                         alarmManager.setExact(
                             AlarmManager.RTC_WAKEUP,

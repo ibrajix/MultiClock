@@ -23,9 +23,7 @@ class AlarmClickedActivity : AppCompatActivity() {
     private fun showContent(){
 
         val textAlarmExtra = intent.getStringExtra(ALARM_INTENT_EXTRA)
-
         binding.txtAlarmTime.text = textAlarmExtra
-
 
     }
 }
