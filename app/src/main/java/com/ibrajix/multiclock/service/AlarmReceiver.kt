@@ -11,6 +11,11 @@ import android.widget.Toast
 import com.ibrajix.multiclock.R
 import com.ibrajix.multiclock.database.Alarm
 import com.ibrajix.multiclock.utils.Constants
+import com.ibrajix.multiclock.utils.Constants.ACTION_SNOOZE
+import com.ibrajix.multiclock.utils.Constants.ACTION_STOP
+import com.ibrajix.multiclock.utils.Constants.ALARM_INTENT_ID
+import com.ibrajix.multiclock.utils.Constants.ALARM_INTENT_TIME
+import com.ibrajix.multiclock.utils.Constants.LOCK_SCREEN_KEY
 import kotlinx.coroutines.CoroutineScope
 import java.util.*
 import javax.inject.Inject
@@ -20,7 +25,6 @@ class AlarmReceiver : BroadcastReceiver() {
     @Inject
     lateinit var coroutineScope: CoroutineScope
 
-    var broadcastCode = 0
 
     override fun onReceive(context: Context?, intent: Intent?) {
 
@@ -30,28 +34,40 @@ class AlarmReceiver : BroadcastReceiver() {
                 startRescheduleAlarmService(context)
             }
 
-            Constants.ACTION_SNOOZE -> {
+            ACTION_SNOOZE -> {
                snoozeAlarm(context, intent)
+            }
+
+            ACTION_STOP -> {
+                stopAlarm(context, intent)
             }
 
             else -> {
                 startAlarmService(context, intent)
             }
         }
+
+    }
+
+    private fun stopAlarm(context: Context?, intent: Intent?){
+        val intentService = Intent(context?.applicationContext, AlarmService::class.java)
+        context?.applicationContext?.stopService(intentService)
     }
 
     private fun startRescheduleAlarmService(context: Context?){
-        val intent = Intent(context, AlarmRescheduleService::class.java)
+        //reschedule alarm
+        /*val intent = Intent(context, AlarmRescheduleService::class.java)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             context?.startForegroundService(intent)
         } else {
             context?.startService(intent)
-        }
+        }*/
     }
 
     private fun startAlarmService(context: Context?, passedIntent: Intent?){
         val intentService = Intent(context, AlarmService::class.java)
-        intentService.putExtra(Constants.ALARM_INTENT_EXTRA, passedIntent?.getStringExtra(Constants.ALARM_INTENT_EXTRA))
+        intentService.putExtra(ALARM_INTENT_TIME, passedIntent?.getStringExtra(ALARM_INTENT_TIME))
+        intentService.putExtra(ALARM_INTENT_ID, passedIntent?.getStringExtra(ALARM_INTENT_ID))
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             context?.startForegroundService(intentService)
         } else {
@@ -59,49 +75,31 @@ class AlarmReceiver : BroadcastReceiver() {
         }
     }
 
-    @SuppressLint("UnspecifiedImmutableFlag")
     private fun snoozeAlarm(context: Context?, intent: Intent?){
-
-        broadcastCode++
 
         val alarmManager: AlarmManager = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
         val calendar = Calendar.getInstance()
         calendar.timeInMillis = System.currentTimeMillis()
-        calendar.add(Calendar.MINUTE, 10)
-
+        calendar.add(Calendar.MINUTE, 1)
 
         val broadcastReceiverIntent = Intent(context, AlarmReceiver::class.java)
-        broadcastReceiverIntent.putExtra(Constants.ALARM_INTENT_EXTRA, calendar.time)
+        broadcastReceiverIntent.putExtra(ALARM_INTENT_TIME, intent?.getStringExtra(ALARM_INTENT_TIME))
 
-        val pendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            PendingIntent.getBroadcast(
-                context,
-                broadcastCode,
-                broadcastReceiverIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-            )
-        } else {
-            PendingIntent.getBroadcast(
-                context,
-                broadcastCode,
-                broadcastReceiverIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT
-            )
-        }
+        val pendingIntent =
+            intent?.let {
+                PendingIntent.getBroadcast(
+                    context,
+                    it.getIntExtra(ALARM_INTENT_ID, 0),
+                    broadcastReceiverIntent,
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                )
+            }
 
-        //reschedule alarm
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            //ensure the alarm fires even if the device is dozing.
-            val alarmClockInfo = AlarmManager.AlarmClockInfo(calendar.timeInMillis, null)
-            alarmManager.setAlarmClock(alarmClockInfo, pendingIntent)
-        } else {
-            alarmManager.setExact(
-                AlarmManager.RTC_WAKEUP,
-                calendar.timeInMillis,
-                pendingIntent
-            )
-        }
+
+        //ensure the alarm fires even if the device is dozing.
+        val alarmClockInfo = AlarmManager.AlarmClockInfo(calendar.timeInMillis, null)
+        alarmManager.setAlarmClock(alarmClockInfo, pendingIntent)
 
         val intentService = Intent(context.applicationContext, AlarmService::class.java)
         context.applicationContext.stopService(intentService)

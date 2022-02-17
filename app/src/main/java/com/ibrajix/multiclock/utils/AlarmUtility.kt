@@ -174,11 +174,14 @@ object AlarmUtility {
                 }
             }
 
+            val id = Random().nextInt(Integer.MAX_VALUE)
+
             val alarm = Alarm(
+                id = id,
                 time = formattedTime,
                 hour = pickedHour,
                 minute = pickedMinute,
-                timeInMilliSecond = timeInMilliSecond
+                timeInMilliSecond = timeInMilliSecond,
             )
 
             callback(alarm)

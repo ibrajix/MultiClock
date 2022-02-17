@@ -1,14 +1,18 @@
 package com.ibrajix.multiclock.database
 
+import androidx.annotation.NonNull
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "alarm_table")
 data class Alarm(
-  @PrimaryKey(autoGenerate = true)
+  @PrimaryKey
+  @NonNull
   @ColumnInfo(name = "id")
   val id: Int? = null,
+  @ColumnInfo(name = "dateCreated")
+  val dateCreated: Long = System.currentTimeMillis(),
   @ColumnInfo(name = "time")
   val time: String,
   @ColumnInfo(name = "hour")
@@ -20,5 +24,15 @@ data class Alarm(
   @ColumnInfo(name = "vibrate")
   val vibrate: Boolean? = true,
   @ColumnInfo(name = "timeInMilliSecond")
-  val timeInMilliSecond: Long
+  val timeInMilliSecond: Long,
+  @ColumnInfo(name = "monday")
+  val monday: Boolean? = false,
+  @ColumnInfo(name = "tuesday")
+  val tuesday: Boolean? = false,
+  @ColumnInfo(name = "wednesday")
+  val wednesday: Boolean? = false,
+  @ColumnInfo(name = "thursday")
+  val thursday: Boolean? = false,
+  @ColumnInfo(name = "friday")
+  val friday: Boolean? = false
 )

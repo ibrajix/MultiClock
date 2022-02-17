@@ -1,6 +1,7 @@
 package com.ibrajix.multiclock.global
 
 import android.app.Application
+import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.os.Build
@@ -40,6 +41,7 @@ class MyApplication : Application() {
                 getString(R.string.channel_name),
                 NotificationManager.IMPORTANCE_HIGH
             )
+            serviceChannel.lockscreenVisibility = Notification.VISIBILITY_PUBLIC
             val manager = getSystemService(NotificationManager::class.java)
             manager.createNotificationChannel(serviceChannel)
         }

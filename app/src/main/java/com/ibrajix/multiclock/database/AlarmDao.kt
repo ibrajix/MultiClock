@@ -10,7 +10,7 @@ interface AlarmDao {
     suspend fun insertAlarm(alarm: Alarm)
 
     @Transaction
-    @Query("SELECT * FROM alarm_table ORDER BY id DESC")
+    @Query("SELECT * FROM alarm_table ORDER BY dateCreated DESC")
     fun getAllAlarms(): Flow<List<Alarm>>
 
     @Update

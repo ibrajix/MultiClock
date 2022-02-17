@@ -20,7 +20,9 @@
 
         <activity
             android:name=".ui.activities.AlarmClickedActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:showOnLockScreen="true"/>
+
         <activity
             android:name=".ui.activities.MainActivity"
             android:exported="true">

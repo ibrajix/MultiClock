@@ -70,6 +70,9 @@
     <string name="channel_name">Alarm Channel</string>
 
     <string name="alarm_snoozed">Alarm snoozed for 10 minutes</string>
+    <string name="back_icon">Back Icon</string>
+    <string name="alarm_details">Alarm Details</string>
+    <string name="edit_icon">Edit Icon</string>
 
 
 </resources>
