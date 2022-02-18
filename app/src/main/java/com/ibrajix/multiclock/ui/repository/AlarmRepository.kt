@@ -20,6 +20,8 @@ class AlarmRepository @Inject constructor(private val alarmDao: AlarmDao) {
 
     suspend fun updateAlarmStatus(status: Boolean, alarmId: Int) =  alarmDao.updateAlarmStatus(status, alarmId)
 
+    suspend fun updateAlarmVibrateStatus(status: Boolean, alarmId: Int) =  alarmDao.updateAlarmVibrateStatus(status, alarmId)
+
     suspend fun updateAlarmMonday(status: Boolean, alarmId: Int) =  alarmDao.updateAlarmMonday(status, alarmId)
 
     suspend fun updateAlarmTuesday(status: Boolean, alarmId: Int) =  alarmDao.updateAlarmTuesday(status, alarmId)

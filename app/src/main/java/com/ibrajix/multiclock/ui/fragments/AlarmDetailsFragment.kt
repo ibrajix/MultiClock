@@ -32,8 +32,9 @@ class AlarmDetailsFragment : Fragment() {
     private var _binding: FragmentAlarmDetailsBinding? = null
     private val binding get() = _binding!!
 
+
     private val alarmViewModel: AlarmViewModel by viewModels()
-    val args: AlarmDetailsFragmentArgs by navArgs()
+    private val args: AlarmDetailsFragmentArgs by navArgs()
 
     var mondayAlarm: Boolean = false
     var tuesdayAlarm: Boolean = false
@@ -42,7 +43,7 @@ class AlarmDetailsFragment : Fragment() {
     var fridayAlarm: Boolean = false
     var saturdayAlarm: Boolean = false
     var sundayAlarm: Boolean = false
-    var isVibrateChecked: Boolean = false
+    var isVibrateChecked: Boolean? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -86,6 +87,11 @@ class AlarmDetailsFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 alarmViewModel.getSingleAlarmResult.collect { alarm->
+
+
+                    isVibrateChecked = alarm.vibrate
+                    binding.switchBtnVibrate.isChecked = alarm.vibrate == true
+
                     if (alarm.monday == true){
                         binding.monday.background = ContextCompat.getDrawable(requireContext(), R.drawable.circular_shape_filled)
                         mondayAlarm = true
@@ -144,7 +150,8 @@ class AlarmDetailsFragment : Fragment() {
                     }
 
                     //check vibrate status
-                    /*binding.switchBtnVibrate.isChecked = alarm.vibrate == true*/
+                    binding.switchBtnVibrate.isChecked = alarm.vibrate == true
+
                 }
             }
         }
@@ -297,7 +304,18 @@ class AlarmDetailsFragment : Fragment() {
         }
 
         //on click switch button
-        binding.switchBtnVibrate.setOnCheckedChangeListener { compoundButton, b ->
+        binding.switchBtnVibrate.setOnCheckedChangeListener { compoundButton, isChecked ->
+
+            if (isVibrateChecked == true && !isChecked){
+                binding.switchBtnVibrate.isChecked = false
+                isVibrateChecked = false
+                args.alarm.id?.let { alarmViewModel.updateAlarmVibrateStatus(alarmId = it, status = false) }
+            }
+            else {
+                binding.switchBtnVibrate.isChecked = true
+                isVibrateChecked = true
+                args.alarm.id?.let { alarmViewModel.updateAlarmVibrateStatus(alarmId = it, status = true) }
+            }
 
         }
 

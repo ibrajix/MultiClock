@@ -26,6 +26,9 @@ interface AlarmDao {
     @Query("UPDATE alarm_table SET status = :status WHERE id = :alarmId")
     suspend fun updateAlarmStatus(status: Boolean, alarmId: Int)
 
+    @Query("UPDATE alarm_table SET vibrate = :vibrate WHERE id = :alarmId")
+    suspend fun updateAlarmVibrateStatus(vibrate: Boolean, alarmId: Int)
+
     @Query("UPDATE alarm_table SET monday = :monday WHERE id = :alarmId")
     suspend fun updateAlarmMonday(monday: Boolean, alarmId: Int)
 
