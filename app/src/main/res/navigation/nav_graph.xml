@@ -13,6 +13,9 @@
         <action
             android:id="@+id/action_alarmFragment_to_aboutFragment"
             app:destination="@id/aboutFragment" />
+        <action
+            android:id="@+id/action_alarmFragment_to_alarmDetailsFragment"
+            app:destination="@id/alarmDetailsFragment" />
     </fragment>
     <fragment
         android:id="@+id/clockFragment"
@@ -34,4 +37,13 @@
         android:id="@+id/aboutFragment"
         android:name="com.ibrajix.multiclock.ui.fragments.AboutFragment"
         android:label="AboutFragment" />
+    <fragment
+        android:id="@+id/alarmDetailsFragment"
+        android:name="com.ibrajix.multiclock.ui.fragments.AlarmDetailsFragment"
+        android:label="fragment_alarm_details"
+        tools:layout="@layout/fragment_alarm_details" >
+        <argument
+            android:name="alarm"
+            app:argType="com.ibrajix.multiclock.database.Alarm" />
+    </fragment>
 </navigation>

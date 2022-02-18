@@ -5,4 +5,8 @@
     <dimen name="rcv_lyt_padding_spacing">10dp</dimen>
     <dimen name="rcv_lyt_text_alarm_title_large">26sp</dimen>
     <dimen name="txt_alarm_details_clicked_large">28sp</dimen>
+
+    <!--Custom view dimensions-->
+    <dimen name="circle_size">100dp</dimen>
+
 </resources>

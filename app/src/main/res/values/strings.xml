@@ -73,6 +73,15 @@
     <string name="back_icon">Back Icon</string>
     <string name="alarm_details">Alarm Details</string>
     <string name="edit_icon">Edit Icon</string>
+    <string name="m">M</string>
+    <string name="t">T</string>
+    <string name="w">W</string>
+    <string name="th">T</string>
+    <string name="f">F</string>
+    <string name="s">S</string>
+    <string name="su">S</string>
+    <string name="speaker_icon">Speaker Icon</string>
+    <string name="schedule">Schedule</string>
 
 
 </resources>

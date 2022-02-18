@@ -18,4 +18,18 @@ class AlarmRepository @Inject constructor(private val alarmDao: AlarmDao) {
 
     suspend fun updateAlarmStatus(status: Boolean, alarmId: Int) =  alarmDao.updateAlarmStatus(status, alarmId)
 
+    suspend fun updateAlarmMonday(status: Boolean, alarmId: Int) =  alarmDao.updateAlarmMonday(status, alarmId)
+
+    suspend fun updateAlarmTuesday(status: Boolean, alarmId: Int) =  alarmDao.updateAlarmTuesday(status, alarmId)
+
+    suspend fun updateAlarmWednesday(status: Boolean, alarmId: Int) =  alarmDao.updateAlarmWednesday(status, alarmId)
+
+    suspend fun updateAlarmThursday(status: Boolean, alarmId: Int) =  alarmDao.updateAlarmThursday(status, alarmId)
+
+    suspend fun updateAlarmFriday(status: Boolean, alarmId: Int) =  alarmDao.updateAlarmFriday(status, alarmId)
+
+    suspend fun updateAlarmSaturday(status: Boolean, alarmId: Int) =  alarmDao.updateAlarmSaturday(status, alarmId)
+
+    suspend fun updateAlarmSunday(status: Boolean, alarmId: Int) =  alarmDao.updateAlarmSunday(status, alarmId)
+
 }

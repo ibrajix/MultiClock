@@ -70,15 +70,12 @@ class AlarmFragment : Fragment() {
     }
 
 
-    @SuppressLint("UnsafeRepeatOnLifecycleDetector")
     private fun setUpObserver() {
 
         alarmViewModel.getAllAlarms()
-
         viewLifecycleOwner.lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 alarmViewModel.getAllAlarmsResult.collect {
-                    Timber.d(it.toString())
                     alarmAdapter.submitList(it)
                     if (it.isEmpty()) {
                         binding.txtNoAlarm.visibility = View.VISIBLE
@@ -93,7 +90,11 @@ class AlarmFragment : Fragment() {
 
     private fun initItems() {
 
-        alarmAdapter = AlarmAdapter(onClickListener = AlarmAdapter.OnAlarmClickListener {
+        alarmAdapter = AlarmAdapter(onClickListener = AlarmAdapter.OnAlarmClickListener { alarm->
+
+            //move to alarm details fragment
+            val action = AlarmFragmentDirections.actionAlarmFragmentToAlarmDetailsFragment(alarm)
+            findNavController().navigate(action)
 
         })
 

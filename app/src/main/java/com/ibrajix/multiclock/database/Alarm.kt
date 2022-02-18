@@ -1,12 +1,15 @@
 package com.ibrajix.multiclock.database
 
+import android.os.Parcelable
 import androidx.annotation.NonNull
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import kotlinx.android.parcel.Parcelize
 
+@Parcelize
 @Entity(tableName = "alarm_table")
-data class Alarm(
+data class Alarm (
   @PrimaryKey
   @NonNull
   @ColumnInfo(name = "id")
@@ -34,5 +37,9 @@ data class Alarm(
   @ColumnInfo(name = "thursday")
   val thursday: Boolean? = false,
   @ColumnInfo(name = "friday")
-  val friday: Boolean? = false
-)
+  val friday: Boolean? = false,
+  @ColumnInfo(name = "saturday")
+  val saturday: Boolean? = false,
+  @ColumnInfo(name = "sunday")
+  val sunday: Boolean? = false
+) : Parcelable

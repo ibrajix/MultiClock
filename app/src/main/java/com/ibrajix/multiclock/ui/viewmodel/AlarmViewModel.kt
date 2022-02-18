@@ -65,4 +65,46 @@ class AlarmViewModel @Inject constructor (private val alarmRepository: AlarmRepo
         }
     }
 
+    fun updateAlarmMonday(status: Boolean, alarmId: Int){
+        viewModelScope.launch {
+            alarmRepository.updateAlarmMonday(status, alarmId)
+        }
+    }
+
+    fun updateAlarmTuesday(status: Boolean, alarmId: Int){
+        viewModelScope.launch {
+            alarmRepository.updateAlarmTuesday(status, alarmId)
+        }
+    }
+
+    fun updateAlarmWednesday(status: Boolean, alarmId: Int){
+        viewModelScope.launch {
+            alarmRepository.updateAlarmWednesday(status, alarmId)
+        }
+    }
+
+    fun updateAlarmThursday(status: Boolean, alarmId: Int){
+        viewModelScope.launch {
+            alarmRepository.updateAlarmThursday(status, alarmId)
+        }
+    }
+
+    fun updateAlarmFriday(status: Boolean, alarmId: Int){
+        viewModelScope.launch {
+            alarmRepository.updateAlarmFriday(status, alarmId)
+        }
+    }
+
+    fun updateAlarmSaturday(status: Boolean, alarmId: Int){
+        viewModelScope.launch {
+            alarmRepository.updateAlarmSaturday(status, alarmId)
+        }
+    }
+
+    fun updateAlarmSunday(status: Boolean, alarmId: Int){
+        viewModelScope.launch {
+            alarmRepository.updateAlarmSunday(status, alarmId)
+        }
+    }
+
 }

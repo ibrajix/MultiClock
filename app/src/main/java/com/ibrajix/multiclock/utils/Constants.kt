@@ -9,6 +9,6 @@ object Constants {
     const val ALARM_NOTIFICATION_ID = 1
     const val ACTION_SNOOZE = "snooze_action"
     const val ACTION_STOP = "stop_action"
-    const val LOCK_SCREEN_KEY = "lockScreenKey"
+    const val SNOOZE_TIME = 10
 
 }

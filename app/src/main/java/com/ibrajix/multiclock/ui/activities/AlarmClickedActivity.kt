@@ -17,6 +17,7 @@ import com.ibrajix.multiclock.service.AlarmService
 import com.ibrajix.multiclock.utils.Constants
 import com.ibrajix.multiclock.utils.Constants.ALARM_INTENT_ID
 import com.ibrajix.multiclock.utils.Constants.ALARM_INTENT_TIME
+import com.ibrajix.multiclock.utils.Constants.SNOOZE_TIME
 import com.ibrajix.multiclock.utils.UiUtility
 import java.util.*
 
@@ -50,7 +51,7 @@ class AlarmClickedActivity : AppCompatActivity() {
 
             val calendar = Calendar.getInstance()
             calendar.timeInMillis = System.currentTimeMillis()
-            calendar.add(Calendar.MINUTE, 1)
+            calendar.add(Calendar.MINUTE, SNOOZE_TIME)
 
             val broadcastReceiverIntent = Intent(this, AlarmReceiver::class.java)
             broadcastReceiverIntent.putExtra(ALARM_INTENT_TIME, UiUtility.getCurrentTime())
