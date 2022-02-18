@@ -6,4 +6,6 @@
     <color name="text_on_card_selected">#000000</color>
     <color name="text_on_card_not_selected">#D8D8D8</color>
     <color name="divider">#EDEDED</color>
+    <color name="sound_round_icon">#626262</color>
+    <color name="sound_round_bg">#C4C4C4</color>
 </resources>

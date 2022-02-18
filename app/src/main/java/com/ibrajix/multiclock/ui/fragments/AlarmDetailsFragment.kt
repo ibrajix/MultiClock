@@ -42,6 +42,7 @@ class AlarmDetailsFragment : Fragment() {
     var fridayAlarm: Boolean = false
     var saturdayAlarm: Boolean = false
     var sundayAlarm: Boolean = false
+    var isVibrateChecked: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -79,63 +80,71 @@ class AlarmDetailsFragment : Fragment() {
 
     private fun checkAlarmRecurringEvent(){
 
-        alarmViewModel.getAllAlarms()
+        args.alarm.id?.let { alarmViewModel.getSingleAlarm(it) }
 
         //observe/collect
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                alarmViewModel.getAllAlarmsResult.collect { alarms->
-                  for (alarm in alarms){
-                      if (alarm.monday == true){
-                          binding.monday.background = ContextCompat.getDrawable(requireContext(), R.drawable.circular_shape_filled)
-                          mondayAlarm = true
-                      }
-                      else {
-                          binding.monday.background = ContextCompat.getDrawable(requireContext(), R.drawable.circular_shape_not_filled)
-                      }
-                      if (alarm.tuesday == true){
-                          binding.tuesday.background = ContextCompat.getDrawable(requireContext(), R.drawable.circular_shape_filled)
-                          tuesdayAlarm = true
-                      }
-                      else {
-                          binding.tuesday.background = ContextCompat.getDrawable(requireContext(), R.drawable.circular_shape_not_filled)
-                      }
-                      if (alarm.wednesday == true){
-                          binding.wednesday.background = ContextCompat.getDrawable(requireContext(), R.drawable.circular_shape_filled)
-                          wednesdayAlarm = true
-                      }
-                      else {
-                          binding.wednesday.background = ContextCompat.getDrawable(requireContext(), R.drawable.circular_shape_not_filled)
-                      }
-                      if (alarm.thursday == true){
-                          binding.thursday.background = ContextCompat.getDrawable(requireContext(), R.drawable.circular_shape_filled)
-                          thursdayAlarm = true
-                      }
-                      else {
-                          binding.thursday.background = ContextCompat.getDrawable(requireContext(), R.drawable.circular_shape_not_filled)
-                      }
-                      if (alarm.friday == true){
-                          binding.friday.background = ContextCompat.getDrawable(requireContext(), R.drawable.circular_shape_filled)
-                          fridayAlarm = true
-                      }
-                      else {
-                          binding.friday.background = ContextCompat.getDrawable(requireContext(), R.drawable.circular_shape_not_filled)
-                      }
-                      if (alarm.saturday == true){
-                          binding.saturday.background = ContextCompat.getDrawable(requireContext(), R.drawable.circular_shape_filled)
-                          saturdayAlarm = true
-                      }
-                      else {
-                          binding.saturday.background = ContextCompat.getDrawable(requireContext(), R.drawable.circular_shape_not_filled)
-                      }
-                      if (alarm.sunday == true){
-                          binding.sunday.background = ContextCompat.getDrawable(requireContext(), R.drawable.circular_shape_filled)
-                          sundayAlarm = true
-                      }
-                      else {
-                          binding.sunday.background = ContextCompat.getDrawable(requireContext(), R.drawable.circular_shape_not_filled)
-                      }
-                  }
+                alarmViewModel.getSingleAlarmResult.collect { alarm->
+                    if (alarm.monday == true){
+                        binding.monday.background = ContextCompat.getDrawable(requireContext(), R.drawable.circular_shape_filled)
+                        mondayAlarm = true
+                    }
+                    else {
+                        binding.monday.background = ContextCompat.getDrawable(requireContext(), R.drawable.circular_shape_not_filled)
+                        mondayAlarm = false
+                    }
+                    if (alarm.tuesday == true){
+                        binding.tuesday.background = ContextCompat.getDrawable(requireContext(), R.drawable.circular_shape_filled)
+                        tuesdayAlarm = true
+                    }
+                    else {
+                        binding.tuesday.background = ContextCompat.getDrawable(requireContext(), R.drawable.circular_shape_not_filled)
+                        tuesdayAlarm = false
+                    }
+                    if (alarm.wednesday == true){
+                        binding.wednesday.background = ContextCompat.getDrawable(requireContext(), R.drawable.circular_shape_filled)
+                        wednesdayAlarm = true
+                    }
+                    else {
+                        binding.wednesday.background = ContextCompat.getDrawable(requireContext(), R.drawable.circular_shape_not_filled)
+                        wednesdayAlarm = false
+                    }
+                    if (alarm.thursday == true){
+                        binding.thursday.background = ContextCompat.getDrawable(requireContext(), R.drawable.circular_shape_filled)
+                        thursdayAlarm = true
+                    }
+                    else {
+                        binding.thursday.background = ContextCompat.getDrawable(requireContext(), R.drawable.circular_shape_not_filled)
+                        thursdayAlarm = false
+                    }
+                    if (alarm.friday == true){
+                        binding.friday.background = ContextCompat.getDrawable(requireContext(), R.drawable.circular_shape_filled)
+                        fridayAlarm = true
+                    }
+                    else {
+                        binding.friday.background = ContextCompat.getDrawable(requireContext(), R.drawable.circular_shape_not_filled)
+                        fridayAlarm = false
+                    }
+                    if (alarm.saturday == true){
+                        binding.saturday.background = ContextCompat.getDrawable(requireContext(), R.drawable.circular_shape_filled)
+                        saturdayAlarm = true
+                    }
+                    else {
+                        binding.saturday.background = ContextCompat.getDrawable(requireContext(), R.drawable.circular_shape_not_filled)
+                        saturdayAlarm = false
+                    }
+                    if (alarm.sunday == true){
+                        binding.sunday.background = ContextCompat.getDrawable(requireContext(), R.drawable.circular_shape_filled)
+                        sundayAlarm = true
+                    }
+                    else {
+                        binding.sunday.background = ContextCompat.getDrawable(requireContext(), R.drawable.circular_shape_not_filled)
+                        sundayAlarm = false
+                    }
+
+                    //check vibrate status
+                    /*binding.switchBtnVibrate.isChecked = alarm.vibrate == true*/
                 }
             }
         }
@@ -284,6 +293,12 @@ class AlarmDetailsFragment : Fragment() {
             else{
                 binding.sunday.background = ContextCompat.getDrawable(requireContext(), R.drawable.circular_shape_filled)
             }
+
+        }
+
+        //on click switch button
+        binding.switchBtnVibrate.setOnCheckedChangeListener { compoundButton, b ->
+
         }
 
     }

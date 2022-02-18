@@ -26,6 +26,9 @@ class AlarmViewModel @Inject constructor (private val alarmRepository: AlarmRepo
     private val _getAllAlarmsResult = MutableSharedFlow<List<Alarm>>()
     val getAllAlarmsResult : SharedFlow<List<Alarm>> = _getAllAlarmsResult
 
+    private val _getSingleAlarmResult = MutableSharedFlow<Alarm>()
+    val getSingleAlarmResult : SharedFlow<Alarm> = _getSingleAlarmResult
+
     private val _getAllAlarmsWhoseStatusIsTrue = MutableSharedFlow<List<Alarm>>()
     val getAllAlarmsWhoseStatusIsTrue : SharedFlow<List<Alarm>> = _getAllAlarmsWhoseStatusIsTrue
 
@@ -57,6 +60,21 @@ class AlarmViewModel @Inject constructor (private val alarmRepository: AlarmRepo
         viewModelScope.launch {
             alarmRepository.deleteSingleAlarm(id)
         }
+    }
+
+    fun getSingleAlarm(alarmId: Int) {
+
+        viewModelScope.launch {
+            alarmRepository.getSingleAlarm(alarmId)
+
+                .catch { e->
+                    FirebaseCrashlytics.getInstance().log(e.toString())
+                }
+                .collect {
+                    _getSingleAlarmResult.emit(it)
+                }
+        }
+
     }
 
     fun updateAlarmStatus(status: Boolean, alarmId: Int){

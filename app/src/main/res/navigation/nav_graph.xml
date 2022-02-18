@@ -45,5 +45,17 @@
         <argument
             android:name="alarm"
             app:argType="com.ibrajix.multiclock.database.Alarm" />
+        <action
+            android:id="@+id/action_alarmDetailsFragment_to_selectAlarmSoundFragment"
+            app:destination="@id/selectAlarmSoundFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/selectAlarmSoundFragment"
+        android:name="com.ibrajix.multiclock.ui.fragments.SelectAlarmSoundFragment"
+        android:label="fragment_select_alarm_sound"
+        tools:layout="@layout/fragment_select_alarm_sound" >
+        <argument
+            android:name="alarm"
+            app:argType="com.ibrajix.multiclock.database.Alarm" />
     </fragment>
 </navigation>

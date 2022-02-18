@@ -82,6 +82,13 @@
     <string name="su">S</string>
     <string name="speaker_icon">Speaker Icon</string>
     <string name="schedule">Schedule</string>
+    <string name="vibrate">Vibrate</string>
+    <string name="delete">Delete</string>
+    <string name="alarm_sound">Alarm Sound</string>
+    <string name="your_sounds">Your Sounds</string>
+    <string name="add_icon">Add Icon</string>
+    <string name="add">Add</string>
+    <string name="device_sounds">Device Sounds</string>
 
 
 </resources>

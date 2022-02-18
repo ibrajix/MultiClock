@@ -7,9 +7,13 @@
         <entry key="app/src/main/res/drawable/circular_shape.xml" value="0.106" />
         <entry key="app/src/main/res/drawable/circular_shape_filled.xml" value="0.135" />
         <entry key="app/src/main/res/drawable/ic_add.xml" value="0.2604166666666667" />
+        <entry key="app/src/main/res/drawable/ic_back.xml" value="0.1825" />
         <entry key="app/src/main/res/drawable/ic_bell.xml" value="0.15052083333333333" />
         <entry key="app/src/main/res/drawable/ic_clock.xml" value="0.15052083333333333" />
+        <entry key="app/src/main/res/drawable/ic_round_sound.xml" value="0.1825" />
+        <entry key="app/src/main/res/drawable/ic_sound_round.xml" value="0.1825" />
         <entry key="app/src/main/res/drawable/ic_speaker.xml" value="0.2335" />
+        <entry key="app/src/main/res/drawable/ic_vibrate.xml" value="0.192" />
         <entry key="app/src/main/res/drawable/lyt_with_border.xml" value="0.1685" />
         <entry key="app/src/main/res/layout/activity_alarm_clicked.xml" value="0.191064453125" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.11" />
@@ -18,9 +22,11 @@
         <entry key="app/src/main/res/layout/fragment_alarm.xml" value="0.165" />
         <entry key="app/src/main/res/layout/fragment_alarm_details.xml" value="0.25" />
         <entry key="app/src/main/res/layout/fragment_clock.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/fragment_select_alarm_sound.xml" value="0.2328125" />
         <entry key="app/src/main/res/layout/fragment_stopwatch.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_timer.xml" value="0.1" />
         <entry key="app/src/main/res/layout/rcv_lyt_alarms.xml" value="0.335" />
+        <entry key="app/src/main/res/layout/rcv_lyt_picked_sound.xml" value="0.2328125" />
         <entry key="app/src/main/res/menu/about_menu.xml" value="0.2205128205128205" />
         <entry key="app/src/main/res/menu/menu.xml" value="0.2598958333333333" />
         <entry key="app/src/main/res/menu/navigation_menu.xml" value="0.14907407407407408" />

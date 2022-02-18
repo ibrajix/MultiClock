@@ -12,6 +12,8 @@ class AlarmRepository @Inject constructor(private val alarmDao: AlarmDao) {
 
     val getAllAlarms : Flow<List<Alarm>> get() = alarmDao.getAllAlarms()
 
+    fun getSingleAlarm(alarmId: Int) = alarmDao.getSingleAlarm(alarmId)
+
     val getAlarmWhoseStatusIsTrue : Flow<List<Alarm>> get() = alarmDao.getAlarmWhoseStatusIsTrue()
 
     suspend fun deleteSingleAlarm(id: Int) = alarmDao.deleteAlarm(id)
