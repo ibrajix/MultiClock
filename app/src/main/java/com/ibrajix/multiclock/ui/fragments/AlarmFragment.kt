@@ -18,11 +18,12 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.ibrajix.multiclock.R
-import com.ibrajix.multiclock.database.Database
 import com.ibrajix.multiclock.databinding.FragmentAlarmBinding
 import com.ibrajix.multiclock.service.AlarmReceiver
 import com.ibrajix.multiclock.ui.adapters.AlarmAdapter
 import com.ibrajix.multiclock.ui.viewmodel.AlarmViewModel
+import com.ibrajix.multiclock.utils.AlarmUtility.cancelAlarm
+import com.ibrajix.multiclock.utils.AlarmUtility.scheduleAlarm
 import com.ibrajix.multiclock.utils.AlarmUtility.showMaterialDialog
 import com.ibrajix.multiclock.utils.AlarmUtility.showPickerAndSetAlarm
 import com.ibrajix.multiclock.utils.Constants.ALARM_INTENT_ID
@@ -30,17 +31,12 @@ import com.ibrajix.multiclock.utils.Constants.ALARM_INTENT_TIME
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import timber.log.Timber
-import javax.inject.Inject
 
 
 @AndroidEntryPoint
 class AlarmFragment : Fragment() {
 
     private lateinit var binding: FragmentAlarmBinding
-
-    @Inject
-    lateinit var database: Database
 
     lateinit var alarmAdapter: AlarmAdapter
 
@@ -98,18 +94,20 @@ class AlarmFragment : Fragment() {
 
         })
 
+        binding.rcvAlarms.apply {
+            adapter = alarmAdapter
+        }
+
         AlarmAdapter.AlarmViewHolder.setOnAlarmChangeStatusListener { alarm, status ->
             alarm.id?.let { alarmViewModel.updateAlarmStatus(status, it) }
             //if status is true, set alarm
             if (status) {
-
+                scheduleAlarm(alarm = alarm, context = requireContext())
             } else {
                 //remove alarm
+                cancelAlarm(alarm = alarm, context = requireContext())
             }
-        }
 
-        binding.rcvAlarms.apply {
-            adapter = alarmAdapter
         }
 
     }
@@ -135,55 +133,18 @@ class AlarmFragment : Fragment() {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
 
                 if (alarmManager.canScheduleExactAlarms()) {
-
                     showPickerAndSetAlarm { alarm ->
-
                         alarmViewModel.createAlarm(alarm)
-
-                        val broadcastReceiverIntent = Intent(requireContext(), AlarmReceiver::class.java)
-                        broadcastReceiverIntent.putExtra(ALARM_INTENT_TIME, alarm.time)
-                        broadcastReceiverIntent.putExtra(ALARM_INTENT_ID, alarm.id)
-
-                        val newPendingIntent = PendingIntent.getBroadcast(
-                            requireContext(),
-                            alarm.id?:0,
-                            broadcastReceiverIntent,
-                            PendingIntent.FLAG_MUTABLE
-                        )
-
-                        //schedule alarm
-                        val alarmClockInfo = AlarmManager.AlarmClockInfo(alarm.timeInMilliSecond, null)
-                        alarmManager.setAlarmClock(alarmClockInfo, newPendingIntent)
-
+                        scheduleAlarm(alarm = alarm, context = requireContext())
                     }
                 } else {
-
                     //show a dialog for user to navigate to settings and turn on alarms and reminder
                     showMaterialDialog()
-
                 }
             } else {
-
                 showPickerAndSetAlarm { alarm->
-
                     alarmViewModel.createAlarm(alarm)
-
-                    //set alarm
-                    val broadcastReceiverIntent = Intent(requireContext(), AlarmReceiver::class.java)
-                    broadcastReceiverIntent.putExtra(ALARM_INTENT_TIME, alarm.time)
-                    broadcastReceiverIntent.putExtra(ALARM_INTENT_ID, alarm.id)
-
-                    val newPendingIntent = PendingIntent.getBroadcast(
-                        requireContext(),
-                        alarm.id?:0,
-                        broadcastReceiverIntent,
-                        PendingIntent.FLAG_CANCEL_CURRENT
-                    )
-
-                    //ensure the alarm fires even if the device is dozing.
-                    val alarmClockInfo = AlarmManager.AlarmClockInfo(alarm.timeInMilliSecond, null)
-                    alarmManager.setAlarmClock(alarmClockInfo, newPendingIntent)
-
+                    scheduleAlarm(alarm = alarm, context = requireContext())
                 }
             }
         }

@@ -1,287 +1,275 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="30dp"
+    android:background="@color/bg"
+    tools:context=".ui.fragments.AlarmDetailsFragment">
 
-    <data>
+    <ImageView
+        android:id="@+id/img_back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/back_icon"
+        android:src="@drawable/ic_back"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <variable
-            name="alarm"
-            type="com.ibrajix.multiclock.database.Alarm" />
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="@string/alarm_details"
+        android:textColor="@color/main_pink"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@+id/img_back"
+        app:layout_constraintTop_toBottomOf="@+id/img_back" />
 
-    </data>
+    <androidx.cardview.widget.CardView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:cardCornerRadius="20dp"
+        app:cardBackgroundColor="@color/card"
+        android:layout_marginTop="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/textView2"
+        app:layout_constraintTop_toBottomOf="@+id/textView2">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="30dp"
-        android:background="@color/bg"
-        tools:context=".ui.fragments.AlarmDetailsFragment">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/card"
+            android:padding="20dp">
 
-        <ImageView
-            android:id="@+id/img_back"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:contentDescription="@string/back_icon"
-            android:src="@drawable/ic_back"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            <TextView
+                android:id="@+id/txt_alarm_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/be_vietnam_pro_bold"
+                android:textColor="@color/text_on_card_selected"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="8:30am" />
 
-        <TextView
-            android:id="@+id/textView2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="@string/alarm_details"
-            android:textColor="@color/main_pink"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="@+id/img_back"
-            app:layout_constraintTop_toBottomOf="@+id/img_back" />
+            <ImageView
+                android:id="@+id/ic_edit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:contentDescription="@string/edit_icon"
+                android:src="@drawable/ic_edit"
+                app:layout_constraintBottom_toBottomOf="@+id/txt_alarm_time"
+                app:layout_constraintStart_toEndOf="@+id/txt_alarm_time"
+                app:layout_constraintTop_toTopOf="@+id/txt_alarm_time" />
 
-        <androidx.cardview.widget.CardView
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            app:cardCornerRadius="20dp"
-            app:cardBackgroundColor="@color/card"
-            android:layout_marginTop="20dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/textView2"
-            app:layout_constraintTop_toBottomOf="@+id/textView2">
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="@string/schedule"
+                app:layout_constraintStart_toStartOf="@+id/txt_alarm_time"
+                app:layout_constraintTop_toBottomOf="@+id/txt_alarm_time" />
+
+            <com.ibrajix.multiclock.ui.customview.CircularTextView
+                android:id="@+id/monday"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:gravity="center"
+                android:inputType="text"
+                android:padding="10dp"
+                android:text="@string/m"
+                android:textAlignment="center"
+                app:layout_constraintEnd_toStartOf="@+id/tuesday"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView3" />
+
+            <com.ibrajix.multiclock.ui.customview.CircularTextView
+                android:id="@+id/tuesday"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:gravity="center"
+                android:inputType="text"
+                android:padding="10dp"
+                android:text="@string/t"
+                android:textAlignment="center"
+                app:layout_constraintBottom_toBottomOf="@+id/monday"
+                app:layout_constraintEnd_toStartOf="@+id/wednesday"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/monday"
+                app:layout_constraintTop_toTopOf="@+id/monday" />
+
+            <com.ibrajix.multiclock.ui.customview.CircularTextView
+                android:id="@+id/wednesday"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:gravity="center"
+                android:inputType="text"
+                android:padding="10dp"
+                android:text="@string/w"
+                android:textAlignment="center"
+                app:layout_constraintBottom_toBottomOf="@+id/tuesday"
+                app:layout_constraintEnd_toStartOf="@+id/thursday"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/tuesday"
+                app:layout_constraintTop_toTopOf="@+id/tuesday"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <com.ibrajix.multiclock.ui.customview.CircularTextView
+                android:id="@+id/thursday"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:gravity="center"
+                android:inputType="text"
+                android:padding="10dp"
+                android:text="@string/th"
+                android:textAlignment="center"
+                app:layout_constraintBottom_toBottomOf="@+id/wednesday"
+                app:layout_constraintEnd_toStartOf="@+id/friday"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/wednesday"
+                app:layout_constraintTop_toTopOf="@+id/wednesday"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <com.ibrajix.multiclock.ui.customview.CircularTextView
+                android:id="@+id/friday"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:gravity="center"
+                android:inputType="text"
+                android:padding="10dp"
+                android:text="@string/f"
+                android:textAlignment="center"
+                app:layout_constraintBottom_toBottomOf="@+id/wednesday"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/thursday"
+                app:layout_constraintTop_toTopOf="@+id/wednesday"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <com.ibrajix.multiclock.ui.customview.CircularTextView
+                android:id="@+id/saturday"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:inputType="text"
+                android:padding="10dp"
+                android:text="@string/s"
+                android:layout_marginTop="30dp"
+                android:textAlignment="center"
+                app:layout_constraintStart_toStartOf="@+id/monday"
+                app:layout_constraintTop_toBottomOf="@+id/monday" />
+
+            <com.ibrajix.multiclock.ui.customview.CircularTextView
+                android:id="@+id/sunday"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:inputType="text"
+                android:padding="10dp"
+                android:text="@string/su"
+                android:textAlignment="center"
+                app:layout_constraintBottom_toBottomOf="@+id/saturday"
+                app:layout_constraintEnd_toEndOf="@+id/tuesday"
+                app:layout_constraintStart_toStartOf="@+id/tuesday"
+                app:layout_constraintTop_toTopOf="@+id/saturday" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/card"
-                android:padding="20dp">
-
-                <TextView
-                    android:id="@+id/txt_alarm_time"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/be_vietnam_pro_bold"
-                    android:textColor="@color/text_on_card_selected"
-                    android:textSize="24sp"
-                    android:textStyle="bold"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:text="8:30am" />
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="20dp"
+                android:id="@+id/lyt_ringtone"
+                app:layout_constraintEnd_toEndOf="@+id/friday"
+                app:layout_constraintStart_toStartOf="@+id/saturday"
+                app:layout_constraintTop_toBottomOf="@+id/sunday">
 
                 <ImageView
-                    android:id="@+id/ic_edit"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:contentDescription="@string/edit_icon"
-                    android:src="@drawable/ic_edit"
-                    app:layout_constraintBottom_toBottomOf="@+id/txt_alarm_time"
-                    app:layout_constraintStart_toEndOf="@+id/txt_alarm_time"
-                    app:layout_constraintTop_toTopOf="@+id/txt_alarm_time" />
-
-                <TextView
-                    android:id="@+id/textView3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    android:text="@string/schedule"
-                    app:layout_constraintStart_toStartOf="@+id/txt_alarm_time"
-                    app:layout_constraintTop_toBottomOf="@+id/txt_alarm_time" />
-
-                <com.ibrajix.multiclock.ui.customview.CircularTextView
-                    android:id="@+id/monday"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="30dp"
-                    android:gravity="center"
-                    android:inputType="text"
-                    android:padding="10dp"
-                    android:text="@string/m"
-                    android:textAlignment="center"
-                    app:layout_constraintEnd_toStartOf="@+id/tuesday"
-                    app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView3" />
-
-                <com.ibrajix.multiclock.ui.customview.CircularTextView
-                    android:id="@+id/tuesday"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:gravity="center"
-                    android:inputType="text"
-                    android:padding="10dp"
-                    android:text="@string/t"
-                    android:textAlignment="center"
-                    app:layout_constraintBottom_toBottomOf="@+id/monday"
-                    app:layout_constraintEnd_toStartOf="@+id/wednesday"
-                    app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintStart_toEndOf="@+id/monday"
-                    app:layout_constraintTop_toTopOf="@+id/monday" />
-
-                <com.ibrajix.multiclock.ui.customview.CircularTextView
-                    android:id="@+id/wednesday"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:gravity="center"
-                    android:inputType="text"
-                    android:padding="10dp"
-                    android:text="@string/w"
-                    android:textAlignment="center"
-                    app:layout_constraintBottom_toBottomOf="@+id/tuesday"
-                    app:layout_constraintEnd_toStartOf="@+id/thursday"
-                    app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintStart_toEndOf="@+id/tuesday"
-                    app:layout_constraintTop_toTopOf="@+id/tuesday"
-                    app:layout_constraintVertical_bias="0.0" />
-
-                <com.ibrajix.multiclock.ui.customview.CircularTextView
-                    android:id="@+id/thursday"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:gravity="center"
-                    android:inputType="text"
-                    android:padding="10dp"
-                    android:text="@string/th"
-                    android:textAlignment="center"
-                    app:layout_constraintBottom_toBottomOf="@+id/wednesday"
-                    app:layout_constraintEnd_toStartOf="@+id/friday"
-                    app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintStart_toEndOf="@+id/wednesday"
-                    app:layout_constraintTop_toTopOf="@+id/wednesday"
-                    app:layout_constraintVertical_bias="0.0" />
-
-                <com.ibrajix.multiclock.ui.customview.CircularTextView
-                    android:id="@+id/friday"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:gravity="center"
-                    android:inputType="text"
-                    android:padding="10dp"
-                    android:text="@string/f"
-                    android:textAlignment="center"
-                    app:layout_constraintBottom_toBottomOf="@+id/wednesday"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintStart_toEndOf="@+id/thursday"
-                    app:layout_constraintTop_toTopOf="@+id/wednesday"
-                    app:layout_constraintVertical_bias="0.0" />
-
-                <com.ibrajix.multiclock.ui.customview.CircularTextView
-                    android:id="@+id/saturday"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:inputType="text"
-                    android:padding="10dp"
-                    android:text="@string/s"
-                    android:layout_marginTop="30dp"
-                    android:textAlignment="center"
-                    app:layout_constraintStart_toStartOf="@+id/monday"
-                    app:layout_constraintTop_toBottomOf="@+id/monday" />
-
-                <com.ibrajix.multiclock.ui.customview.CircularTextView
-                    android:id="@+id/sunday"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:inputType="text"
-                    android:padding="10dp"
-                    android:text="@string/su"
-                    android:textAlignment="center"
-                    app:layout_constraintBottom_toBottomOf="@+id/saturday"
-                    app:layout_constraintEnd_toEndOf="@+id/tuesday"
-                    app:layout_constraintStart_toStartOf="@+id/tuesday"
-                    app:layout_constraintTop_toTopOf="@+id/saturday" />
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="30dp"
-                    android:background="?android:attr/selectableItemBackground"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:padding="20dp"
-                    android:id="@+id/lyt_ringtone"
-                    app:layout_constraintEnd_toEndOf="@+id/friday"
-                    app:layout_constraintStart_toStartOf="@+id/saturday"
-                    app:layout_constraintTop_toBottomOf="@+id/sunday">
-
-                    <ImageView
-                        android:id="@+id/imageView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:contentDescription="@string/speaker_icon"
-                        android:src="@drawable/ic_speaker"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-
-                    <TextView
-                        android:id="@+id/txt_ringtone"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="20dp"
-                        android:textColor="@color/text_on_card_selected"
-                        android:includeFontPadding="false"
-                        tools:text="Morning Glory"
-                        app:layout_constraintBottom_toBottomOf="@+id/imageView"
-                        app:layout_constraintStart_toEndOf="@+id/imageView"
-                        app:layout_constraintTop_toTopOf="@+id/imageView" />
-
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-                <ImageView
-                    android:id="@+id/imageView2"
+                    android:id="@+id/imageView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:contentDescription="@string/speaker_icon"
-                    android:src="@drawable/ic_vibrate"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginTop="10dp"
-                    app:layout_constraintStart_toStartOf="@+id/lyt_ringtone"
-                    app:layout_constraintTop_toBottomOf="@+id/lyt_ringtone" />
+                    android:src="@drawable/ic_speaker"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
 
                 <TextView
+                    android:id="@+id/txt_ringtone"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/vibrate"
+                    android:layout_marginStart="20dp"
                     android:textColor="@color/text_on_card_selected"
                     android:includeFontPadding="false"
-                    android:layout_marginStart="20dp"
-                    app:layout_constraintBottom_toBottomOf="@+id/imageView2"
-                    app:layout_constraintStart_toEndOf="@+id/imageView2"
-                    app:layout_constraintTop_toTopOf="@+id/imageView2" />
+                    tools:text="Morning Glory"
+                    app:layout_constraintBottom_toBottomOf="@+id/imageView"
+                    app:layout_constraintStart_toEndOf="@+id/imageView"
+                    app:layout_constraintTop_toTopOf="@+id/imageView" />
 
-                <com.google.android.material.switchmaterial.SwitchMaterial
-                    android:id="@+id/switch_btn_vibrate"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checked="@{alarm.vibrate}"
-                    app:layout_constraintBottom_toBottomOf="@+id/imageView2"
-                    app:layout_constraintEnd_toEndOf="@+id/lyt_ringtone"
-                    app:layout_constraintTop_toTopOf="@+id/imageView2" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/delete"
-                    android:textColor="@color/main_pink"
-                    android:textStyle="bold"
-                    android:textSize="18sp"
-                    android:layout_marginBottom="20dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-        </androidx.cardview.widget.CardView>
+            <ImageView
+                android:id="@+id/imageView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/speaker_icon"
+                android:src="@drawable/ic_vibrate"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="10dp"
+                app:layout_constraintStart_toStartOf="@+id/lyt_ringtone"
+                app:layout_constraintTop_toBottomOf="@+id/lyt_ringtone" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</layout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/vibrate"
+                android:textColor="@color/text_on_card_selected"
+                android:includeFontPadding="false"
+                android:layout_marginStart="20dp"
+                app:layout_constraintBottom_toBottomOf="@+id/imageView2"
+                app:layout_constraintStart_toEndOf="@+id/imageView2"
+                app:layout_constraintTop_toTopOf="@+id/imageView2" />
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/switch_btn_vibrate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="@+id/imageView2"
+                app:layout_constraintEnd_toEndOf="@+id/lyt_ringtone"
+                app:layout_constraintTop_toTopOf="@+id/imageView2" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/delete"
+                android:textColor="@color/main_pink"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:layout_marginBottom="20dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

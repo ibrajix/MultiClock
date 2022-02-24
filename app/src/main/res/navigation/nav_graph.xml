@@ -15,7 +15,11 @@
             app:destination="@id/aboutFragment" />
         <action
             android:id="@+id/action_alarmFragment_to_alarmDetailsFragment"
-            app:destination="@id/alarmDetailsFragment" />
+            app:destination="@id/alarmDetailsFragment"
+            app:enterAnim="@anim/from_left"
+            app:exitAnim="@anim/to_right"
+            app:popEnterAnim="@anim/from_right"
+            app:popExitAnim="@anim/to_left" />
     </fragment>
     <fragment
         android:id="@+id/clockFragment"

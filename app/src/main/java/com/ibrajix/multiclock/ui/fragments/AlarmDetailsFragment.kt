@@ -63,6 +63,11 @@ class AlarmDetailsFragment : Fragment() {
         initView()
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
     private fun initView(){
         setView()
         handleClicks()
@@ -72,6 +77,7 @@ class AlarmDetailsFragment : Fragment() {
     private fun setView(){
 
         binding.txtAlarmTime.text = args.alarm.time
+        binding.switchBtnVibrate.isChecked = args.alarm.vibrate?:true
 
         val alarmTone: Uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
         val ringtoneAlarm = RingtoneManager.getRingtone(requireContext(), alarmTone)
@@ -85,12 +91,12 @@ class AlarmDetailsFragment : Fragment() {
 
         //observe/collect
         viewLifecycleOwner.lifecycleScope.launch {
+
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+
                 alarmViewModel.getSingleAlarmResult.collect { alarm->
 
-
                     isVibrateChecked = alarm.vibrate
-                    binding.switchBtnVibrate.isChecked = alarm.vibrate == true
 
                     if (alarm.monday == true){
                         binding.monday.background = ContextCompat.getDrawable(requireContext(), R.drawable.circular_shape_filled)
@@ -148,9 +154,6 @@ class AlarmDetailsFragment : Fragment() {
                         binding.sunday.background = ContextCompat.getDrawable(requireContext(), R.drawable.circular_shape_not_filled)
                         sundayAlarm = false
                     }
-
-                    //check vibrate status
-                    binding.switchBtnVibrate.isChecked = alarm.vibrate == true
 
                 }
             }

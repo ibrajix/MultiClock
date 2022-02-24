@@ -53,12 +53,12 @@ class AlarmReceiver : BroadcastReceiver() {
 
     private fun startRescheduleAlarmService(context: Context?){
         //reschedule alarm
-        /*val intent = Intent(context, AlarmRescheduleService::class.java)
+        val intent = Intent(context, AlarmRescheduleService::class.java)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             context?.startForegroundService(intent)
         } else {
             context?.startService(intent)
-        }*/
+        }
     }
 
     private fun startAlarmService(context: Context?, passedIntent: Intent?){

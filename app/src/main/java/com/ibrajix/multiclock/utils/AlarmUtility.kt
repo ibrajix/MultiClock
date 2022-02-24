@@ -5,23 +5,20 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import android.os.Vibrator
 import android.provider.Settings
 import android.widget.Toast
 import androidx.annotation.RequiresApi
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.LifecycleService
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import com.ibrajix.multiclock.R
 import com.ibrajix.multiclock.database.Alarm
+import com.ibrajix.multiclock.service.AlarmReceiver
 import dev.shreyaspatil.MaterialDialog.MaterialDialog
 import java.util.*
 import java.util.Calendar.SATURDAY
 import java.util.Calendar.SUNDAY
 import java.util.concurrent.TimeUnit
-import kotlin.math.min
 
 object AlarmUtility {
 
@@ -108,10 +105,9 @@ object AlarmUtility {
         require(!(day < SUNDAY || day > SATURDAY)) { "Invalid day of week: $day" }
     }
 
-    fun ringsIn(hour: Int, minutes: Int): Long {
+    private fun ringsIn(hour: Int, minutes: Int): Long {
         return ringsAt(hour, minutes) - System.currentTimeMillis()
     }
-
 
     fun Fragment.showPickerAndSetAlarm(callback :(Alarm) -> Unit) {
 
@@ -134,7 +130,6 @@ object AlarmUtility {
             calendar[Calendar.MINUTE] = pickedMinute
             calendar[Calendar.SECOND] = 0
             calendar[Calendar.MILLISECOND] = 0
-            val timeInMilliSecond = calendar.timeInMillis
 
 
             // if alarm time has already passed, increment day by 1
@@ -181,12 +176,13 @@ object AlarmUtility {
                 time = formattedTime,
                 hour = pickedHour,
                 minute = pickedMinute,
-                timeInMilliSecond = timeInMilliSecond,
+                timeInMilliSecond = calendar.timeInMillis,
             )
 
             callback(alarm)
 
             Toast.makeText(requireContext(), getString(R.string.alarm_set_for, DurationUtility.showAlarmToast(requireContext(), ringsIn(pickedHour, pickedMinute), false)), Toast.LENGTH_LONG).show()
+
         }
 
     }
@@ -217,6 +213,69 @@ object AlarmUtility {
             }
             .build()
         mDialog.show()
+
+    }
+
+    fun scheduleAlarm(alarm: Alarm, context: Context){
+
+        val calendar = Calendar.getInstance()
+        calendar[Calendar.HOUR_OF_DAY] = alarm.hour
+        calendar[Calendar.MINUTE] = alarm.minute
+        calendar[Calendar.SECOND] = 0
+        calendar[Calendar.MILLISECOND] = 0
+
+
+        // if alarm time has already passed, increment day by 1
+        if (calendar.timeInMillis <= System.currentTimeMillis()) {
+            calendar[Calendar.DAY_OF_MONTH] = calendar[Calendar.DAY_OF_MONTH] + 1
+        }
+
+        val alarmManager: AlarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+        val pendingIntentFlags: Int = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            PendingIntent.FLAG_MUTABLE
+        } else {
+            PendingIntent.FLAG_CANCEL_CURRENT
+        }
+
+        val broadcastReceiverIntent = Intent(context, AlarmReceiver::class.java)
+        broadcastReceiverIntent.putExtra(Constants.ALARM_INTENT_TIME, alarm.time)
+        broadcastReceiverIntent.putExtra(Constants.ALARM_INTENT_ID, alarm.id)
+
+        val newPendingIntent = PendingIntent.getBroadcast(
+            context,
+            alarm.id?:0,
+            broadcastReceiverIntent,
+            pendingIntentFlags
+        )
+
+        //schedule alarm
+        val alarmClockInfo = AlarmManager.AlarmClockInfo(calendar.timeInMillis, null)
+        alarmManager.setAlarmClock(alarmClockInfo, newPendingIntent)
+
+        Toast.makeText(context, context.getString(R.string.alarm_set_for, DurationUtility.showAlarmToast(context, ringsIn(alarm.hour, alarm.minute), false)), Toast.LENGTH_LONG).show()
+
+    }
+
+    fun cancelAlarm(alarm: Alarm, context: Context) {
+
+        val alarmManager: AlarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val broadcastReceiverIntent = Intent(context, AlarmReceiver::class.java)
+
+        val pendingIntentFlags: Int = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            PendingIntent.FLAG_MUTABLE
+        } else {
+            PendingIntent.FLAG_CANCEL_CURRENT
+        }
+
+        val newPendingIntent = PendingIntent.getBroadcast(
+            context,
+            alarm.id?:0,
+            broadcastReceiverIntent,
+            pendingIntentFlags
+        )
+
+        alarmManager.cancel(newPendingIntent)
 
     }
 
