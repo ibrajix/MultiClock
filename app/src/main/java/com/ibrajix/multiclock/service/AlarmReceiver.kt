@@ -19,10 +19,6 @@ import javax.inject.Inject
 
 class AlarmReceiver : BroadcastReceiver() {
 
-    @Inject
-    lateinit var coroutineScope: CoroutineScope
-
-
     override fun onReceive(context: Context?, intent: Intent?) {
 
         when (intent?.action) {
@@ -73,36 +69,7 @@ class AlarmReceiver : BroadcastReceiver() {
     }
 
     private fun snoozeAlarm(context: Context?, intent: Intent?){
-
-        val alarmManager: AlarmManager = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-
-        val calendar = Calendar.getInstance()
-        calendar.timeInMillis = System.currentTimeMillis()
-        calendar.add(Calendar.MINUTE, SNOOZE_TIME)
-
-        val broadcastReceiverIntent = Intent(context, AlarmReceiver::class.java)
-        broadcastReceiverIntent.putExtra(ALARM_INTENT_TIME, intent?.getStringExtra(ALARM_INTENT_TIME))
-
-        val pendingIntent =
-            intent?.let {
-                PendingIntent.getBroadcast(
-                    context,
-                    it.getIntExtra(ALARM_INTENT_ID, 0),
-                    broadcastReceiverIntent,
-                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-                )
-            }
-
-
-        //ensure the alarm fires even if the device is dozing.
-        val alarmClockInfo = AlarmManager.AlarmClockInfo(calendar.timeInMillis, null)
-        alarmManager.setAlarmClock(alarmClockInfo, pendingIntent)
-
-        val intentService = Intent(context.applicationContext, AlarmService::class.java)
-        context.applicationContext.stopService(intentService)
-
-        Toast.makeText(context, context.getString(R.string.alarm_snoozed), Toast.LENGTH_LONG).show()
-
+        snoozeAlarm(context, intent)
     }
 
 }

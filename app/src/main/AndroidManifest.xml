@@ -22,6 +22,7 @@
         <activity
             android:name=".ui.activities.AlarmClickedActivity"
             android:exported="false"
+            android:excludeFromRecents="true"
             android:showOnLockScreen="true"/>
 
         <activity

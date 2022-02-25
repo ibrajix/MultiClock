@@ -14,6 +14,7 @@ import com.google.android.material.timepicker.TimeFormat
 import com.ibrajix.multiclock.R
 import com.ibrajix.multiclock.database.Alarm
 import com.ibrajix.multiclock.service.AlarmReceiver
+import com.ibrajix.multiclock.service.AlarmService
 import dev.shreyaspatil.MaterialDialog.MaterialDialog
 import java.util.*
 import java.util.Calendar.SATURDAY
@@ -22,7 +23,7 @@ import java.util.concurrent.TimeUnit
 
 object AlarmUtility {
 
-    val intent: Intent? = null
+
 
     private val recurringDays = BooleanArray(7)
 
@@ -276,6 +277,42 @@ object AlarmUtility {
         )
 
         alarmManager.cancel(newPendingIntent)
+
+    }
+
+    fun snoozeAlarm(context: Context, intent: Intent){
+
+        val alarmManager: AlarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+        val calendar = Calendar.getInstance()
+        calendar.timeInMillis = System.currentTimeMillis()
+        calendar.add(Calendar.MINUTE, Constants.SNOOZE_TIME)
+
+        val broadcastReceiverIntent = Intent(context, AlarmReceiver::class.java)
+        broadcastReceiverIntent.putExtra(
+            Constants.ALARM_INTENT_TIME, intent.getStringExtra(
+                Constants.ALARM_INTENT_TIME
+            ))
+
+        val pendingIntent =
+            intent.let {
+                PendingIntent.getBroadcast(
+                    context,
+                    it.getIntExtra(Constants.ALARM_INTENT_ID, 0),
+                    broadcastReceiverIntent,
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                )
+            }
+
+
+        //ensure the alarm fires even if the device is dozing.
+        val alarmClockInfo = AlarmManager.AlarmClockInfo(calendar.timeInMillis, null)
+        alarmManager.setAlarmClock(alarmClockInfo, pendingIntent)
+
+        val intentService = Intent(context.applicationContext, AlarmService::class.java)
+        context.applicationContext.stopService(intentService)
+
+        Toast.makeText(context, context.getString(R.string.alarm_snoozed), Toast.LENGTH_LONG).show()
 
     }
 
