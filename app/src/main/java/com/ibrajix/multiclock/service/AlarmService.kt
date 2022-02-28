@@ -14,6 +14,9 @@ import androidx.core.app.NotificationCompat.VISIBILITY_PUBLIC
 import androidx.core.content.ContextCompat
 import com.ibrajix.multiclock.R
 import com.ibrajix.multiclock.ui.activities.AlarmClickedActivity
+import com.ibrajix.multiclock.utils.AlarmUtility.repeatAlarm
+import com.ibrajix.multiclock.utils.AlarmUtility.scheduleAlarm
+import com.ibrajix.multiclock.utils.Constants
 import com.ibrajix.multiclock.utils.Constants.ACTION_SNOOZE
 import com.ibrajix.multiclock.utils.Constants.ACTION_STOP
 import com.ibrajix.multiclock.utils.Constants.ALARM_INTENT_ID
@@ -49,6 +52,14 @@ class AlarmService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
 
+        //start alarm for the next day again
+
+        val getPassedIntentForWeeklyAlarm = intent?.getBooleanExtra(Constants.IS_ALARM_WEEKLY_REPEATING, false)
+
+        if (getPassedIntentForWeeklyAlarm == false){
+             //do normal repeating of daily alarm
+            repeatAlarm(alarmTime = intent.getStringExtra(ALARM_INTENT_TIME), alarmId = intent.getStringExtra(ALARM_INTENT_ID), context = this)
+        }
 
         //activity intent - when notification is clicked
         val activityIntent = Intent(this, AlarmClickedActivity::class.java)

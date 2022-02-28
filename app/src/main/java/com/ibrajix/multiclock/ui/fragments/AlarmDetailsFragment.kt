@@ -1,6 +1,8 @@
 package com.ibrajix.multiclock.ui.fragments
 
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Bundle
@@ -19,7 +21,19 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import com.ibrajix.multiclock.R
 import com.ibrajix.multiclock.databinding.FragmentAlarmDetailsBinding
+import com.ibrajix.multiclock.service.AlarmReceiver
 import com.ibrajix.multiclock.ui.viewmodel.AlarmViewModel
+import com.ibrajix.multiclock.utils.AlarmUtility.cancelWeeklyAlarm
+import com.ibrajix.multiclock.utils.AlarmUtility.getRecurringDays
+import com.ibrajix.multiclock.utils.AlarmUtility.scheduleWeeklyAlarm
+import com.ibrajix.multiclock.utils.Constants
+import com.ibrajix.multiclock.utils.Constants.ALARM_FRIDAY
+import com.ibrajix.multiclock.utils.Constants.ALARM_MONDAY
+import com.ibrajix.multiclock.utils.Constants.ALARM_SATURDAY
+import com.ibrajix.multiclock.utils.Constants.ALARM_SUNDAY
+import com.ibrajix.multiclock.utils.Constants.ALARM_THURSDAY
+import com.ibrajix.multiclock.utils.Constants.ALARM_TUESDAY
+import com.ibrajix.multiclock.utils.Constants.ALARM_WEDNESDAY
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_alarm_details.*
 import kotlinx.coroutines.flow.collect
@@ -95,8 +109,11 @@ class AlarmDetailsFragment : Fragment() {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
 
                 alarmViewModel.getSingleAlarmResult.collect { alarm->
-
                     isVibrateChecked = alarm.vibrate
+
+                   val recurring = getRecurringDays(alarm.monday, alarm.tuesday, alarm.wednesday, alarm.thursday, alarm.friday, alarm.saturday, alarm.sunday)
+
+                    binding.txtSchedule.text = recurring
 
                     if (alarm.monday == true){
                         binding.monday.background = ContextCompat.getDrawable(requireContext(), R.drawable.circular_shape_filled)
@@ -109,6 +126,7 @@ class AlarmDetailsFragment : Fragment() {
                     if (alarm.tuesday == true){
                         binding.tuesday.background = ContextCompat.getDrawable(requireContext(), R.drawable.circular_shape_filled)
                         tuesdayAlarm = true
+                        scheduleWeeklyAlarm(args.alarm, 3, requireContext())
                     }
                     else {
                         binding.tuesday.background = ContextCompat.getDrawable(requireContext(), R.drawable.circular_shape_not_filled)
@@ -117,6 +135,7 @@ class AlarmDetailsFragment : Fragment() {
                     if (alarm.wednesday == true){
                         binding.wednesday.background = ContextCompat.getDrawable(requireContext(), R.drawable.circular_shape_filled)
                         wednesdayAlarm = true
+                        scheduleWeeklyAlarm(args.alarm, 4, requireContext())
                     }
                     else {
                         binding.wednesday.background = ContextCompat.getDrawable(requireContext(), R.drawable.circular_shape_not_filled)
@@ -125,6 +144,7 @@ class AlarmDetailsFragment : Fragment() {
                     if (alarm.thursday == true){
                         binding.thursday.background = ContextCompat.getDrawable(requireContext(), R.drawable.circular_shape_filled)
                         thursdayAlarm = true
+                        scheduleWeeklyAlarm(args.alarm, 5, requireContext())
                     }
                     else {
                         binding.thursday.background = ContextCompat.getDrawable(requireContext(), R.drawable.circular_shape_not_filled)
@@ -133,6 +153,7 @@ class AlarmDetailsFragment : Fragment() {
                     if (alarm.friday == true){
                         binding.friday.background = ContextCompat.getDrawable(requireContext(), R.drawable.circular_shape_filled)
                         fridayAlarm = true
+                        scheduleWeeklyAlarm(args.alarm, 6, requireContext())
                     }
                     else {
                         binding.friday.background = ContextCompat.getDrawable(requireContext(), R.drawable.circular_shape_not_filled)
@@ -141,6 +162,7 @@ class AlarmDetailsFragment : Fragment() {
                     if (alarm.saturday == true){
                         binding.saturday.background = ContextCompat.getDrawable(requireContext(), R.drawable.circular_shape_filled)
                         saturdayAlarm = true
+                        scheduleWeeklyAlarm(args.alarm, 7, requireContext())
                     }
                     else {
                         binding.saturday.background = ContextCompat.getDrawable(requireContext(), R.drawable.circular_shape_not_filled)
@@ -149,6 +171,7 @@ class AlarmDetailsFragment : Fragment() {
                     if (alarm.sunday == true){
                         binding.sunday.background = ContextCompat.getDrawable(requireContext(), R.drawable.circular_shape_filled)
                         sundayAlarm = true
+                        scheduleWeeklyAlarm(args.alarm, 1, requireContext())
                     }
                     else {
                         binding.sunday.background = ContextCompat.getDrawable(requireContext(), R.drawable.circular_shape_not_filled)
@@ -173,9 +196,11 @@ class AlarmDetailsFragment : Fragment() {
 
             mondayAlarm = if (mondayAlarm){
                 args.alarm.id?.let { it1 -> alarmViewModel.updateAlarmMonday(false, it1) }
+                cancelWeeklyAlarm(ALARM_MONDAY, requireContext())
                 false
             } else {
                 args.alarm.id?.let { it1 -> alarmViewModel.updateAlarmMonday(true, it1) }
+                scheduleWeeklyAlarm(args.alarm, ALARM_MONDAY, requireContext())
                 true
             }
 
@@ -192,9 +217,11 @@ class AlarmDetailsFragment : Fragment() {
 
            tuesdayAlarm = if (tuesdayAlarm){
                 args.alarm.id?.let { it1 -> alarmViewModel.updateAlarmTuesday(false, it1) }
+                cancelWeeklyAlarm(ALARM_TUESDAY, requireContext())
                 false
             } else {
                 args.alarm.id?.let { it1 -> alarmViewModel.updateAlarmTuesday(true, it1) }
+                scheduleWeeklyAlarm(args.alarm, ALARM_TUESDAY, requireContext())
                 true
             }
 
@@ -212,9 +239,11 @@ class AlarmDetailsFragment : Fragment() {
 
             wednesdayAlarm = if (wednesdayAlarm){
                 args.alarm.id?.let { it1 -> alarmViewModel.updateAlarmWednesday(false, it1) }
+                cancelWeeklyAlarm(ALARM_WEDNESDAY, requireContext())
                 false
             } else {
                 args.alarm.id?.let { it1 -> alarmViewModel.updateAlarmWednesday(true, it1) }
+                scheduleWeeklyAlarm(args.alarm, ALARM_WEDNESDAY, requireContext())
                 true
             }
 
@@ -232,9 +261,11 @@ class AlarmDetailsFragment : Fragment() {
 
             thursdayAlarm = if (thursdayAlarm){
                 args.alarm.id?.let { it1 -> alarmViewModel.updateAlarmThursday(false, it1) }
+                cancelWeeklyAlarm(ALARM_THURSDAY, requireContext())
                 false
             } else {
                 args.alarm.id?.let { it1 -> alarmViewModel.updateAlarmThursday(true, it1) }
+                scheduleWeeklyAlarm(args.alarm, ALARM_THURSDAY, requireContext())
                 true
             }
 
@@ -251,9 +282,11 @@ class AlarmDetailsFragment : Fragment() {
 
             fridayAlarm = if (fridayAlarm){
                 args.alarm.id?.let { it1 -> alarmViewModel.updateAlarmFriday(false, it1) }
+                cancelWeeklyAlarm(ALARM_FRIDAY, requireContext())
                 false
             } else {
                 args.alarm.id?.let { it1 -> alarmViewModel.updateAlarmFriday(true, it1) }
+                scheduleWeeklyAlarm(args.alarm, ALARM_FRIDAY, requireContext())
                 true
             }
 
@@ -271,9 +304,11 @@ class AlarmDetailsFragment : Fragment() {
 
             saturdayAlarm = if (saturdayAlarm){
                 args.alarm.id?.let { it1 -> alarmViewModel.updateAlarmSaturday(false, it1) }
+                cancelWeeklyAlarm(ALARM_SATURDAY, requireContext())
                 false
             } else {
                 args.alarm.id?.let { it1 -> alarmViewModel.updateAlarmSaturday(true, it1) }
+                scheduleWeeklyAlarm(args.alarm, ALARM_SATURDAY, requireContext())
                 true
             }
 
@@ -290,9 +325,11 @@ class AlarmDetailsFragment : Fragment() {
 
             sundayAlarm = if (sundayAlarm){
                 args.alarm.id?.let { it1 -> alarmViewModel.updateAlarmSunday(false, it1) }
+                cancelWeeklyAlarm(ALARM_SUNDAY, requireContext())
                 false
             } else {
                 args.alarm.id?.let { it1 -> alarmViewModel.updateAlarmSunday(true, it1) }
+                scheduleWeeklyAlarm(args.alarm, ALARM_SUNDAY, requireContext())
                 true
             }
 

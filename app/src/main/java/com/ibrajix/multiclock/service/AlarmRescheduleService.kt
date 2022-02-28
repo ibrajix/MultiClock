@@ -26,9 +26,6 @@ class AlarmRescheduleService : LifecycleService() {
 
     private val alarmManager: AlarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
-    lateinit var alarmPendingIntent: PendingIntent
-
-
     override fun onCreate() {
         super.onCreate()
     }

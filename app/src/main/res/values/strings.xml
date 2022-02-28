@@ -19,6 +19,7 @@
     <!-- ==================================== TOASTS ==================================== -->
 
     <string name="alarm_set_for">Alarm set for %1$s from now.</string>
+    <string name="alarm_set_for_weekday">Alarm set to repeat every %1$s.</string>
     <string name="day_hour_and_minute">1 day, 1 hour, and 1 minute</string>
     <string name="days_hour_and_minute">%1$d days, 1 hour, and 1 minute</string>
     <string name="days_hours_and_minute">%1$d days, %2$d hours, and 1 minute</string>
