@@ -9,6 +9,7 @@ import android.provider.Settings
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
+import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import com.ibrajix.multiclock.R
@@ -16,11 +17,13 @@ import com.ibrajix.multiclock.database.Alarm
 import com.ibrajix.multiclock.service.AlarmReceiver
 import com.ibrajix.multiclock.service.AlarmService
 import com.ibrajix.multiclock.utils.Constants.IS_ALARM_WEEKLY_REPEATING
+import dev.shreyaspatil.MaterialDialog.BottomSheetMaterialDialog
 import dev.shreyaspatil.MaterialDialog.MaterialDialog
 import java.util.*
 import java.util.Calendar.SATURDAY
 import java.util.Calendar.SUNDAY
 import java.util.concurrent.TimeUnit
+
 
 object AlarmUtility {
 
@@ -191,13 +194,13 @@ object AlarmUtility {
 
     //show material dialog
     @RequiresApi(Build.VERSION_CODES.S)
-    fun Fragment.showMaterialDialog(){
+    fun Fragment.showMaterialDialog(title: String, message: String, anim: Int){
 
         val mDialog = MaterialDialog.Builder(requireActivity())
-            .setTitle(requireContext().getString(R.string.need_permission))
-            .setMessage(requireContext().getString(R.string.permission_helper))
+            .setTitle(title)
+            .setMessage(message)
             .setCancelable(false)
-            .setAnimation(R.raw.permission)
+            .setAnimation(anim)
             .setPositiveButton(
                 requireContext().getString(R.string.allow)
             ) { dialogInterface, which ->
@@ -215,6 +218,30 @@ object AlarmUtility {
             }
             .build()
         mDialog.show()
+
+    }
+
+    fun Fragment.showConfirmationDeleteDialog(alarm: Alarm, title: String, message: String, callback : (Alarm) -> Unit){
+
+        val mBottomSheetDialog = BottomSheetMaterialDialog.Builder(requireActivity())
+            .setTitle(title)
+            .setMessage(message)
+            .setCancelable(true)
+            .setPositiveButton(
+                getString(R.string.delete), R.drawable.ic_check
+            ) { dialogInterface, which ->
+                callback(alarm)
+                dialogInterface.dismiss()
+            }
+            .setNegativeButton(
+                getString(R.string.no), R.drawable.ic_close
+            ) { dialogInterface, which ->
+                dialogInterface.dismiss()
+            }
+            .build()
+
+        // Show Dialog
+        mBottomSheetDialog.show()
 
     }
 
@@ -287,7 +314,7 @@ object AlarmUtility {
 
         val newPendingIntent = PendingIntent.getBroadcast(
             context,
-            dayOfWeek,
+            alarm.id?:0,
             broadcastReceiverIntent,
             pendingIntentFlags
         )
@@ -356,7 +383,7 @@ object AlarmUtility {
 
     }
 
-    fun cancelWeeklyAlarm(dayOfWeek: Int, context: Context) {
+    fun cancelWeeklyAlarm(alarm: Alarm, context: Context) {
 
         val alarmManager: AlarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val broadcastReceiverIntent = Intent(context, AlarmReceiver::class.java)
@@ -369,7 +396,7 @@ object AlarmUtility {
 
         val newPendingIntent = PendingIntent.getBroadcast(
             context,
-            dayOfWeek,
+            alarm.id?:0,
             broadcastReceiverIntent,
             pendingIntentFlags
         )

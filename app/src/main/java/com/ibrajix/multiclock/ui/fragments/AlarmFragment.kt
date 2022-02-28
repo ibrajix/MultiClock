@@ -139,7 +139,7 @@ class AlarmFragment : Fragment() {
                     }
                 } else {
                     //show a dialog for user to navigate to settings and turn on alarms and reminder
-                    showMaterialDialog()
+                    showMaterialDialog(title = getString(R.string.need_permission), message = getString(R.string.permission_helper), anim = R.raw.permission)
                 }
             } else {
                 showPickerAndSetAlarm { alarm->
