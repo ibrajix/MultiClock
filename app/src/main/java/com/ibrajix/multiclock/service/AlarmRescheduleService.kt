@@ -43,16 +43,19 @@ class AlarmRescheduleService : LifecycleService() {
                 alarmRepository.getAlarmWhoseStatusIsTrue.collect {
                     for (alarm in it) {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-
                             if (alarmManager.canScheduleExactAlarms()) {
-                                scheduleAlarm(alarm = alarm, context = this@AlarmRescheduleService)
+                                if(alarm.status == true && alarm.weeklyRecurring == false){
+                                    scheduleAlarm(alarm = alarm, context = this@AlarmRescheduleService)
+                                }
                             }
                             else {
                                 //do nothing or show a toast stating that scheduling has been disabled or turned off
                             }
                         }
                         else {
-                            scheduleAlarm(alarm = alarm, context = this@AlarmRescheduleService)
+                            if (alarm.status == true){
+                                scheduleAlarm(alarm = alarm, context = this@AlarmRescheduleService)
+                            }
                         }
                     }
                 }

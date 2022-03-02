@@ -25,6 +25,7 @@
         <entry key="app/src/main/res/layout/fragment_alarm_details.xml" value="0.25" />
         <entry key="app/src/main/res/layout/fragment_clock.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_select_alarm_sound.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/fragment_select_sound.xml" value="0.2328125" />
         <entry key="app/src/main/res/layout/fragment_stopwatch.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_timer.xml" value="0.1" />
         <entry key="app/src/main/res/layout/rcv_device_sounds.xml" value="0.2328125" />

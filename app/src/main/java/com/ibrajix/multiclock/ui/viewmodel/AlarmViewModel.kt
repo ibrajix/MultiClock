@@ -131,4 +131,10 @@ class AlarmViewModel @Inject constructor (private val alarmRepository: AlarmRepo
         }
     }
 
+    fun updateAlarmWeeklyRecurring(status: Boolean, alarmId: Int){
+        viewModelScope.launch {
+            alarmRepository.updateAlarmWeeklyRecurring(status, alarmId)
+        }
+    }
+
 }

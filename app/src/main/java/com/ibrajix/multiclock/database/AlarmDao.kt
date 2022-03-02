@@ -54,4 +54,7 @@ interface AlarmDao {
     @Query("SELECT * FROM alarm_table WHERE status = :status")
     fun getAlarmWhoseStatusIsTrue(status: Boolean = true) : Flow<List<Alarm>>
 
+    @Query("UPDATE alarm_table SET weeklyRecurring = :weeklyRecurring WHERE id = :alarmId")
+    suspend fun updateAlarmWeeklyRecurring(weeklyRecurring: Boolean, alarmId: Int)
+
 }

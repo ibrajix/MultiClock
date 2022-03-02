@@ -4,10 +4,10 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
-import android.media.MediaPlayer
+import android.media.Ringtone
 import android.media.RingtoneManager
+import android.net.Uri
 import android.os.*
-import android.provider.Settings
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationCompat.EXTRA_NOTIFICATION_ID
 import androidx.core.app.NotificationCompat.VISIBILITY_PUBLIC
@@ -15,7 +15,6 @@ import androidx.core.content.ContextCompat
 import com.ibrajix.multiclock.R
 import com.ibrajix.multiclock.ui.activities.AlarmClickedActivity
 import com.ibrajix.multiclock.utils.AlarmUtility.repeatAlarm
-import com.ibrajix.multiclock.utils.AlarmUtility.scheduleAlarm
 import com.ibrajix.multiclock.utils.Constants
 import com.ibrajix.multiclock.utils.Constants.ACTION_SNOOZE
 import com.ibrajix.multiclock.utils.Constants.ACTION_STOP
@@ -30,7 +29,9 @@ import com.ibrajix.multiclock.utils.UiUtility.getCurrentTime
 class AlarmService : Service() {
 
     private var vibrator: Vibrator? = null
-    private var mediaPlayer: MediaPlayer? = null
+
+    private var notification: Uri? = null
+    private var ringtone: Ringtone? = null
 
     override fun onCreate() {
 
@@ -44,9 +45,6 @@ class AlarmService : Service() {
             @Suppress("DEPRECATION")
             getSystemService(VIBRATOR_SERVICE) as Vibrator
         }
-
-        mediaPlayer = MediaPlayer.create(this, Settings.System.DEFAULT_RINGTONE_URI)
-
     }
 
 
@@ -127,14 +125,9 @@ class AlarmService : Service() {
             .setCategory(NotificationCompat.CATEGORY_ALARM)
             .build()
 
-
-        mediaPlayer?.start()
-        mediaPlayer?.isLooping = true
-
-        val notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
-        val r = RingtoneManager.getRingtone(this, notification)
-        r.play()
-
+        notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
+        ringtone = RingtoneManager.getRingtone(this, notification)
+        ringtone?.play()
 
         val pattern = longArrayOf(1500, 800, 800, 800)
 
@@ -153,7 +146,7 @@ class AlarmService : Service() {
 
     override fun onDestroy() {
         vibrator?.cancel()
-        mediaPlayer?.stop()
+        ringtone?.stop()
         super.onDestroy()
     }
 

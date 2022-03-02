@@ -1,11 +1,13 @@
 package com.ibrajix.multiclock.utils
 
+import android.app.Activity
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.provider.Settings
+import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
@@ -16,6 +18,7 @@ import com.ibrajix.multiclock.R
 import com.ibrajix.multiclock.database.Alarm
 import com.ibrajix.multiclock.service.AlarmReceiver
 import com.ibrajix.multiclock.service.AlarmService
+import com.ibrajix.multiclock.utils.Constants.ALARM_MONDAY
 import com.ibrajix.multiclock.utils.Constants.IS_ALARM_WEEKLY_REPEATING
 import dev.shreyaspatil.MaterialDialog.BottomSheetMaterialDialog
 import dev.shreyaspatil.MaterialDialog.MaterialDialog
@@ -221,6 +224,34 @@ object AlarmUtility {
 
     }
 
+    @RequiresApi(Build.VERSION_CODES.S)
+    fun Activity.showMaterialDialog(title: String, message: String, anim: Int){
+
+        val mDialog = MaterialDialog.Builder(this)
+            .setTitle(title)
+            .setMessage(message)
+            .setCancelable(false)
+            .setAnimation(anim)
+            .setPositiveButton(
+                getString(R.string.allow)
+            ) { dialogInterface, which ->
+                //on click, navigate to settings screen
+                val intent = Intent().apply {
+                    action = Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM
+                }
+                startActivity(intent)
+            }
+            .setNegativeButton(
+                getString(R.string.later)
+            ){dialogInterface, which ->
+                //on click cancel
+                dialogInterface.dismiss()
+            }
+            .build()
+        mDialog.show()
+
+    }
+
     fun Fragment.showConfirmationDeleteDialog(alarm: Alarm, title: String, message: String, callback : (Alarm) -> Unit){
 
         val mBottomSheetDialog = BottomSheetMaterialDialog.Builder(requireActivity())
@@ -286,7 +317,47 @@ object AlarmUtility {
 
     }
 
-    fun scheduleWeeklyAlarm(alarm: Alarm, dayOfWeek: Int, context: Context){
+
+    fun rescheduleAlarm(alarm: Alarm, context: Context){
+
+        val calendar = Calendar.getInstance()
+        calendar[Calendar.HOUR_OF_DAY] = alarm.hour
+        calendar[Calendar.MINUTE] = alarm.minute
+        calendar[Calendar.SECOND] = 0
+        calendar[Calendar.MILLISECOND] = 0
+
+
+        // if alarm time has already passed, increment day by 1
+        if (calendar.timeInMillis <= System.currentTimeMillis()) {
+            calendar[Calendar.DAY_OF_MONTH] = calendar[Calendar.DAY_OF_MONTH] + 1
+        }
+
+        val alarmManager: AlarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+        val pendingIntentFlags: Int = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            PendingIntent.FLAG_MUTABLE
+        } else {
+            PendingIntent.FLAG_CANCEL_CURRENT
+        }
+
+        val broadcastReceiverIntent = Intent(context, AlarmReceiver::class.java)
+        broadcastReceiverIntent.putExtra(Constants.ALARM_INTENT_TIME, alarm.time)
+        broadcastReceiverIntent.putExtra(Constants.ALARM_INTENT_ID, alarm.id)
+
+        val newPendingIntent = PendingIntent.getBroadcast(
+            context,
+            alarm.id?:0,
+            broadcastReceiverIntent,
+            pendingIntentFlags
+        )
+
+        //schedule alarm
+        val alarmClockInfo = AlarmManager.AlarmClockInfo(calendar.timeInMillis, null)
+        alarmManager.setAlarmClock(alarmClockInfo, newPendingIntent)
+
+    }
+
+    fun scheduleWeeklyAlarm(alarm: Alarm, dayOfWeek: Int, context: Context) {
 
         val calendar = Calendar.getInstance()
         calendar[Calendar.DAY_OF_WEEK] = dayOfWeek
@@ -295,11 +366,12 @@ object AlarmUtility {
         calendar[Calendar.MILLISECOND] = 0
 
         //if alarm time has already passed, increment day by the following week
-        if(calendar.timeInMillis < System.currentTimeMillis()) {
+        if (calendar.timeInMillis < System.currentTimeMillis()) {
             calendar.add(Calendar.DAY_OF_YEAR, 7)
         }
 
-        val alarmManager: AlarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val alarmManager: AlarmManager =
+            context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
         val pendingIntentFlags: Int = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             PendingIntent.FLAG_MUTABLE
@@ -314,7 +386,7 @@ object AlarmUtility {
 
         val newPendingIntent = PendingIntent.getBroadcast(
             context,
-            alarm.id?:0,
+            dayOfWeek,
             broadcastReceiverIntent,
             pendingIntentFlags
         )
@@ -322,10 +394,19 @@ object AlarmUtility {
         //schedule alarm
         val alarmClockInfo = AlarmManager.AlarmClockInfo(calendar.timeInMillis, null)
         alarmManager.setAlarmClock(alarmClockInfo, newPendingIntent)
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, 1 * 60 * 60 * 1000, newPendingIntent)
+        alarmManager.setRepeating(
+            AlarmManager.RTC_WAKEUP,
+            calendar.timeInMillis,
+            1 * 60 * 60 * 1000,
+            newPendingIntent
+        )
 
         val dayOfTheWeek: String = getDayOfTheWeekInString(calendar.get(Calendar.DAY_OF_WEEK))
-        Toast.makeText(context, context.getString(R.string.alarm_set_for_weekday, dayOfTheWeek), Toast.LENGTH_LONG).show()
+        Toast.makeText(
+            context,
+            context.getString(R.string.alarm_set_for_weekday, dayOfTheWeek),
+            Toast.LENGTH_LONG
+        ).show()
 
     }
 
@@ -358,7 +439,6 @@ object AlarmUtility {
         val alarmClockInfo = AlarmManager.AlarmClockInfo(interval, null)
         alarmManager.setAlarmClock(alarmClockInfo, newPendingIntent)
 
-
     }
 
     fun cancelAlarm(alarm: Alarm, context: Context) {
@@ -372,6 +452,7 @@ object AlarmUtility {
             PendingIntent.FLAG_CANCEL_CURRENT
         }
 
+
         val newPendingIntent = PendingIntent.getBroadcast(
             context,
             alarm.id?:0,
@@ -383,7 +464,7 @@ object AlarmUtility {
 
     }
 
-    fun cancelWeeklyAlarm(alarm: Alarm, context: Context) {
+    fun cancelWeeklyAlarm(alarm: Alarm, context: Context, dayOfWeek: Int) {
 
         val alarmManager: AlarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val broadcastReceiverIntent = Intent(context, AlarmReceiver::class.java)

@@ -123,6 +123,12 @@ class AlarmDetailsFragment : Fragment() {
 
                     binding.txtSchedule.text = recurring
 
+                    if (alarm.monday == true || alarm.tuesday == true || alarm.wednesday == true || alarm.thursday == true
+                        || alarm.friday == true || alarm.saturday == true || alarm.sunday == true
+                    ){
+                        alarm.id?.let { alarmViewModel.updateAlarmWeeklyRecurring(true, it) }
+                    }
+
                     if (alarm.monday == true){
                         binding.monday.background = ContextCompat.getDrawable(requireContext(), R.drawable.circular_shape_filled)
                         mondayAlarm = true
@@ -213,7 +219,7 @@ class AlarmDetailsFragment : Fragment() {
 
             mondayAlarm = if (mondayAlarm){
                 args.alarm.id?.let { it1 -> alarmViewModel.updateAlarmMonday(false, it1) }
-                cancelWeeklyAlarm(args.alarm, requireContext())
+                cancelWeeklyAlarm(args.alarm, requireContext(), ALARM_MONDAY)
                 false
             } else {
                 args.alarm.id?.let { it1 -> alarmViewModel.updateAlarmMonday(true, it1) }
@@ -234,7 +240,7 @@ class AlarmDetailsFragment : Fragment() {
 
            tuesdayAlarm = if (tuesdayAlarm){
                 args.alarm.id?.let { it1 -> alarmViewModel.updateAlarmTuesday(false, it1) }
-                cancelWeeklyAlarm(args.alarm, requireContext())
+                cancelWeeklyAlarm(args.alarm, requireContext(), ALARM_TUESDAY)
                 false
             } else {
                 args.alarm.id?.let { it1 -> alarmViewModel.updateAlarmTuesday(true, it1) }
@@ -256,7 +262,7 @@ class AlarmDetailsFragment : Fragment() {
 
             wednesdayAlarm = if (wednesdayAlarm){
                 args.alarm.id?.let { it1 -> alarmViewModel.updateAlarmWednesday(false, it1) }
-                cancelWeeklyAlarm(args.alarm, requireContext())
+                cancelWeeklyAlarm(args.alarm, requireContext(), ALARM_WEDNESDAY)
                 false
             } else {
                 args.alarm.id?.let { it1 -> alarmViewModel.updateAlarmWednesday(true, it1) }
@@ -278,7 +284,7 @@ class AlarmDetailsFragment : Fragment() {
 
             thursdayAlarm = if (thursdayAlarm){
                 args.alarm.id?.let { it1 -> alarmViewModel.updateAlarmThursday(false, it1) }
-                cancelWeeklyAlarm(args.alarm, requireContext())
+                cancelWeeklyAlarm(args.alarm, requireContext(), ALARM_THURSDAY)
                 false
             } else {
                 args.alarm.id?.let { it1 -> alarmViewModel.updateAlarmThursday(true, it1) }
@@ -299,7 +305,7 @@ class AlarmDetailsFragment : Fragment() {
 
             fridayAlarm = if (fridayAlarm){
                 args.alarm.id?.let { it1 -> alarmViewModel.updateAlarmFriday(false, it1) }
-                cancelWeeklyAlarm(args.alarm, requireContext())
+                cancelWeeklyAlarm(args.alarm, requireContext(), ALARM_FRIDAY)
                 false
             } else {
                 args.alarm.id?.let { it1 -> alarmViewModel.updateAlarmFriday(true, it1) }
@@ -321,7 +327,7 @@ class AlarmDetailsFragment : Fragment() {
 
             saturdayAlarm = if (saturdayAlarm){
                 args.alarm.id?.let { it1 -> alarmViewModel.updateAlarmSaturday(false, it1) }
-                cancelWeeklyAlarm(args.alarm, requireContext())
+                cancelWeeklyAlarm(args.alarm, requireContext(), ALARM_SATURDAY)
                 false
             } else {
                 args.alarm.id?.let { it1 -> alarmViewModel.updateAlarmSaturday(true, it1) }
@@ -342,7 +348,7 @@ class AlarmDetailsFragment : Fragment() {
 
             sundayAlarm = if (sundayAlarm){
                 args.alarm.id?.let { it1 -> alarmViewModel.updateAlarmSunday(false, it1) }
-                cancelWeeklyAlarm(args.alarm, requireContext())
+                cancelWeeklyAlarm(args.alarm, requireContext(), ALARM_SUNDAY)
                 false
             } else {
                 args.alarm.id?.let { it1 -> alarmViewModel.updateAlarmSunday(true, it1) }

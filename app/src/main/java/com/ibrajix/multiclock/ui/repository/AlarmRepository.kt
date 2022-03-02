@@ -36,4 +36,6 @@ class AlarmRepository @Inject constructor(private val alarmDao: AlarmDao) {
 
     suspend fun updateAlarmSunday(status: Boolean, alarmId: Int) =  alarmDao.updateAlarmSunday(status, alarmId)
 
+    suspend fun updateAlarmWeeklyRecurring(status: Boolean, alarmId: Int) =  alarmDao.updateAlarmWeeklyRecurring(status, alarmId)
+
 }

@@ -41,5 +41,7 @@ data class Alarm (
   @ColumnInfo(name = "saturday")
   val saturday: Boolean? = false,
   @ColumnInfo(name = "sunday")
-  val sunday: Boolean? = false
+  val sunday: Boolean? = false,
+  @ColumnInfo(name = "weeklyRecurring")
+  val weeklyRecurring: Boolean? = false
 ) : Parcelable
