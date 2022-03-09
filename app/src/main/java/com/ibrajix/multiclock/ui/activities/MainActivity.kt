@@ -20,8 +20,8 @@ import com.ibrajix.multiclock.databinding.ActivityMainBinding
 import com.ibrajix.multiclock.ui.viewmodel.AlarmViewModel
 import com.ibrajix.multiclock.ui.viewmodel.BottomNavViewModel
 import com.ibrajix.multiclock.utils.AlarmUtility
-import com.ibrajix.multiclock.utils.AlarmUtility.showMaterialDialog
 import com.ibrajix.multiclock.utils.UiUtility.isDarkTheme
+import com.ibrajix.multiclock.utils.UiUtility.showMaterialDialog
 import com.ibrajix.multiclock.utils.UiUtility.transparentStatusBar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
@@ -46,13 +46,13 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        checkAlarmStatusAndSet()
+        //checkAlarmStatusAndSet()
         initCodes()
         handleBottomNavVisibility()
 
     }
 
-    private fun checkAlarmStatusAndSet(){
+   private fun checkAlarmStatusAndSet(){
 
         val alarmManager: AlarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
@@ -92,6 +92,7 @@ class MainActivity : AppCompatActivity() {
         supportFragmentManager.findFragmentById(R.id.nav_host_fragment)?.findNavController()?.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
                 R.id.alarmDetailsFragment -> bottomNavViewModel.hideBottomNav()
+                R.id.selectAlarmSoundFragment -> bottomNavViewModel.hideBottomNav()
                 else -> bottomNavViewModel.showBottomNav()
             }
         }

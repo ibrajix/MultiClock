@@ -1,27 +1,25 @@
 package com.ibrajix.multiclock.utils
 
-import android.app.Activity
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.os.Build
-import android.provider.Settings
-import android.util.Log
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
-import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import com.ibrajix.multiclock.R
 import com.ibrajix.multiclock.database.Alarm
 import com.ibrajix.multiclock.service.AlarmReceiver
 import com.ibrajix.multiclock.service.AlarmService
+import com.ibrajix.multiclock.utils.Constants.ALARM_FRIDAY
 import com.ibrajix.multiclock.utils.Constants.ALARM_MONDAY
+import com.ibrajix.multiclock.utils.Constants.ALARM_SATURDAY
+import com.ibrajix.multiclock.utils.Constants.ALARM_SUNDAY
+import com.ibrajix.multiclock.utils.Constants.ALARM_THURSDAY
+import com.ibrajix.multiclock.utils.Constants.ALARM_TUESDAY
+import com.ibrajix.multiclock.utils.Constants.ALARM_WEDNESDAY
 import com.ibrajix.multiclock.utils.Constants.IS_ALARM_WEEKLY_REPEATING
-import dev.shreyaspatil.MaterialDialog.BottomSheetMaterialDialog
-import dev.shreyaspatil.MaterialDialog.MaterialDialog
 import java.util.*
 import java.util.Calendar.SATURDAY
 import java.util.Calendar.SUNDAY
@@ -119,10 +117,13 @@ object AlarmUtility {
 
     fun Fragment.showPickerAndSetAlarm(callback :(Alarm) -> Unit) {
 
+        val hour = Calendar.getInstance()[Calendar.HOUR_OF_DAY]
+        val minute = Calendar.getInstance()[Calendar.MINUTE]
+
         val materialTimePicker: MaterialTimePicker = MaterialTimePicker.Builder()
             .setTitleText(requireContext().getString(R.string.select_time))
-            .setHour(12)
-            .setMinute(10)
+            .setHour(hour)
+            .setMinute(minute)
             .setTimeFormat(TimeFormat.CLOCK_12H)
             .build()
 
@@ -195,84 +196,79 @@ object AlarmUtility {
 
     }
 
-    //show material dialog
-    @RequiresApi(Build.VERSION_CODES.S)
-    fun Fragment.showMaterialDialog(title: String, message: String, anim: Int){
+    fun Fragment.showPickerAndUpdateAlarm(alarm: Alarm, callback :(Alarm) -> Unit) {
 
-        val mDialog = MaterialDialog.Builder(requireActivity())
-            .setTitle(title)
-            .setMessage(message)
-            .setCancelable(false)
-            .setAnimation(anim)
-            .setPositiveButton(
-                requireContext().getString(R.string.allow)
-            ) { dialogInterface, which ->
-                //on click, navigate to settings screen
-                val intent = Intent().apply {
-                    action = Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM
+        val materialTimePicker: MaterialTimePicker = MaterialTimePicker.Builder()
+            .setTitleText(requireContext().getString(R.string.select_time))
+            .setHour(alarm.hour)
+            .setMinute(alarm.minute)
+            .setTimeFormat(TimeFormat.CLOCK_12H)
+            .build()
+
+        materialTimePicker.show(parentFragmentManager, getString(R.string.alarm))
+
+        materialTimePicker.addOnPositiveButtonClickListener {
+
+            val pickedHour: Int = materialTimePicker.hour
+            val pickedMinute: Int = materialTimePicker.minute
+
+            val calendar = Calendar.getInstance()
+            calendar[Calendar.HOUR_OF_DAY] = pickedHour
+            calendar[Calendar.MINUTE] = pickedMinute
+            calendar[Calendar.SECOND] = 0
+            calendar[Calendar.MILLISECOND] = 0
+
+
+            // if alarm time has already passed, increment day by 1
+            if (calendar.timeInMillis <= System.currentTimeMillis()) {
+                calendar[Calendar.DAY_OF_MONTH] = calendar[Calendar.DAY_OF_MONTH] + 1
+            }
+
+
+            val formattedTime: String = when {
+                pickedHour > 12 -> {
+                    if (pickedMinute < 10) {
+                        "${materialTimePicker.hour - 12}:0${materialTimePicker.minute}pm"
+                    } else {
+                        "${materialTimePicker.hour - 12}:${materialTimePicker.minute}pm"
+                    }
                 }
-                startActivity(intent)
-            }
-            .setNegativeButton(
-                requireContext().getString(R.string.later)
-            ){dialogInterface, which ->
-                //on click cancel
-                dialogInterface.dismiss()
-            }
-            .build()
-        mDialog.show()
-
-    }
-
-    @RequiresApi(Build.VERSION_CODES.S)
-    fun Activity.showMaterialDialog(title: String, message: String, anim: Int){
-
-        val mDialog = MaterialDialog.Builder(this)
-            .setTitle(title)
-            .setMessage(message)
-            .setCancelable(false)
-            .setAnimation(anim)
-            .setPositiveButton(
-                getString(R.string.allow)
-            ) { dialogInterface, which ->
-                //on click, navigate to settings screen
-                val intent = Intent().apply {
-                    action = Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM
+                pickedHour == 12 -> {
+                    if (pickedMinute < 10) {
+                        "${materialTimePicker.hour}:0${materialTimePicker.minute}pm"
+                    } else {
+                        "${materialTimePicker.hour}:${materialTimePicker.minute}pm"
+                    }
                 }
-                startActivity(intent)
+                pickedHour == 0 -> {
+                    if (pickedMinute < 10) {
+                        "${materialTimePicker.hour + 12}:0${materialTimePicker.minute}am"
+                    } else {
+                        "${materialTimePicker.hour + 12}:${materialTimePicker.minute}am"
+                    }
+                }
+                else -> {
+                    if (pickedMinute < 10) {
+                        "${materialTimePicker.hour}:0${materialTimePicker.minute}am"
+                    } else {
+                        "${materialTimePicker.hour}:${materialTimePicker.minute}am"
+                    }
+                }
             }
-            .setNegativeButton(
-                getString(R.string.later)
-            ){dialogInterface, which ->
-                //on click cancel
-                dialogInterface.dismiss()
-            }
-            .build()
-        mDialog.show()
 
-    }
+            val alarm = Alarm(
+                id = alarm.id,
+                time = formattedTime,
+                hour = pickedHour,
+                minute = pickedMinute,
+                timeInMilliSecond = calendar.timeInMillis,
+            )
 
-    fun Fragment.showConfirmationDeleteDialog(alarm: Alarm, title: String, message: String, callback : (Alarm) -> Unit){
+            callback(alarm)
 
-        val mBottomSheetDialog = BottomSheetMaterialDialog.Builder(requireActivity())
-            .setTitle(title)
-            .setMessage(message)
-            .setCancelable(true)
-            .setPositiveButton(
-                getString(R.string.delete), R.drawable.ic_check
-            ) { dialogInterface, which ->
-                callback(alarm)
-                dialogInterface.dismiss()
-            }
-            .setNegativeButton(
-                getString(R.string.no), R.drawable.ic_close
-            ) { dialogInterface, which ->
-                dialogInterface.dismiss()
-            }
-            .build()
+            Toast.makeText(requireContext(), getString(R.string.alarm_set_for, DurationUtility.showAlarmToast(requireContext(), ringsIn(pickedHour, pickedMinute), false)), Toast.LENGTH_LONG).show()
 
-        // Show Dialog
-        mBottomSheetDialog.show()
+        }
 
     }
 
@@ -292,12 +288,6 @@ object AlarmUtility {
 
         val alarmManager: AlarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
-        val pendingIntentFlags: Int = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            PendingIntent.FLAG_MUTABLE
-        } else {
-            PendingIntent.FLAG_CANCEL_CURRENT
-        }
-
         val broadcastReceiverIntent = Intent(context, AlarmReceiver::class.java)
         broadcastReceiverIntent.putExtra(Constants.ALARM_INTENT_TIME, alarm.time)
         broadcastReceiverIntent.putExtra(Constants.ALARM_INTENT_ID, alarm.id)
@@ -306,14 +296,12 @@ object AlarmUtility {
             context,
             alarm.id?:0,
             broadcastReceiverIntent,
-            pendingIntentFlags
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
 
         //schedule alarm
         val alarmClockInfo = AlarmManager.AlarmClockInfo(calendar.timeInMillis, null)
         alarmManager.setAlarmClock(alarmClockInfo, newPendingIntent)
-
-        Toast.makeText(context, context.getString(R.string.alarm_set_for, DurationUtility.showAlarmToast(context, ringsIn(alarm.hour, alarm.minute), false)), Toast.LENGTH_LONG).show()
 
     }
 
@@ -334,11 +322,6 @@ object AlarmUtility {
 
         val alarmManager: AlarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
-        val pendingIntentFlags: Int = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            PendingIntent.FLAG_MUTABLE
-        } else {
-            PendingIntent.FLAG_CANCEL_CURRENT
-        }
 
         val broadcastReceiverIntent = Intent(context, AlarmReceiver::class.java)
         broadcastReceiverIntent.putExtra(Constants.ALARM_INTENT_TIME, alarm.time)
@@ -348,7 +331,7 @@ object AlarmUtility {
             context,
             alarm.id?:0,
             broadcastReceiverIntent,
-            pendingIntentFlags
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
 
         //schedule alarm
@@ -373,12 +356,6 @@ object AlarmUtility {
         val alarmManager: AlarmManager =
             context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
-        val pendingIntentFlags: Int = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            PendingIntent.FLAG_MUTABLE
-        } else {
-            PendingIntent.FLAG_CANCEL_CURRENT
-        }
-
         val broadcastReceiverIntent = Intent(context, AlarmReceiver::class.java)
         broadcastReceiverIntent.putExtra(Constants.ALARM_INTENT_TIME, alarm.time)
         broadcastReceiverIntent.putExtra(Constants.ALARM_INTENT_ID, alarm.id)
@@ -388,7 +365,7 @@ object AlarmUtility {
             context,
             dayOfWeek,
             broadcastReceiverIntent,
-            pendingIntentFlags
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
 
         //schedule alarm
@@ -397,7 +374,7 @@ object AlarmUtility {
         alarmManager.setRepeating(
             AlarmManager.RTC_WAKEUP,
             calendar.timeInMillis,
-            1 * 60 * 60 * 1000,
+            24 * 60 * 60 * 1000,
             newPendingIntent
         )
 
@@ -414,22 +391,18 @@ object AlarmUtility {
 
         val alarmManager: AlarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
-        val pendingIntentFlags: Int = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            PendingIntent.FLAG_MUTABLE
-        } else {
-            PendingIntent.FLAG_CANCEL_CURRENT
-        }
 
         val broadcastReceiverIntent = Intent(context, AlarmReceiver::class.java)
         broadcastReceiverIntent.putExtra(Constants.ALARM_INTENT_TIME, alarmTime)
         broadcastReceiverIntent.putExtra(Constants.ALARM_INTENT_ID, alarmId)
+
 
         val newPendingIntent = alarmId?.let {
             PendingIntent.getBroadcast(
                 context,
                 it.toInt(),
                 broadcastReceiverIntent,
-                pendingIntentFlags
+                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
             )
         }
 
@@ -446,40 +419,30 @@ object AlarmUtility {
         val alarmManager: AlarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val broadcastReceiverIntent = Intent(context, AlarmReceiver::class.java)
 
-        val pendingIntentFlags: Int = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            PendingIntent.FLAG_MUTABLE
-        } else {
-            PendingIntent.FLAG_CANCEL_CURRENT
-        }
-
-
         val newPendingIntent = PendingIntent.getBroadcast(
             context,
             alarm.id?:0,
             broadcastReceiverIntent,
-            pendingIntentFlags
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
+
+        newPendingIntent.cancel()
 
         alarmManager.cancel(newPendingIntent)
 
     }
+
 
     fun cancelWeeklyAlarm(alarm: Alarm, context: Context, dayOfWeek: Int) {
 
         val alarmManager: AlarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val broadcastReceiverIntent = Intent(context, AlarmReceiver::class.java)
 
-        val pendingIntentFlags: Int = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            PendingIntent.FLAG_MUTABLE
-        } else {
-            PendingIntent.FLAG_CANCEL_CURRENT
-        }
-
         val newPendingIntent = PendingIntent.getBroadcast(
             context,
-            alarm.id?:0,
+            dayOfWeek,
             broadcastReceiverIntent,
-            pendingIntentFlags
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
 
         alarmManager.cancel(newPendingIntent)
@@ -506,7 +469,7 @@ object AlarmUtility {
                     context,
                     it.getIntExtra(Constants.ALARM_INTENT_ID, 0),
                     broadcastReceiverIntent,
-                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                    PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
                 )
             }
 
@@ -562,6 +525,32 @@ object AlarmUtility {
             7 -> day = "Saturday"
         }
         return day
+    }
+
+
+    //check if alarm is on (weekly)
+    fun checkWeeklyAlarmStatusAndCancel(alarm: Alarm, context: Context) {
+        if (alarm.monday == true){
+            cancelWeeklyAlarm(alarm, context, ALARM_MONDAY)
+        }
+        if (alarm.tuesday == true){
+            cancelWeeklyAlarm(alarm, context, ALARM_TUESDAY)
+        }
+        if (alarm.wednesday == true){
+            cancelWeeklyAlarm(alarm, context, ALARM_WEDNESDAY)
+        }
+        if (alarm.thursday == true){
+            cancelWeeklyAlarm(alarm, context, ALARM_THURSDAY)
+        }
+        if (alarm.friday == true){
+            cancelWeeklyAlarm(alarm, context, ALARM_FRIDAY)
+        }
+        if (alarm.saturday == true){
+            cancelWeeklyAlarm(alarm, context, ALARM_SATURDAY)
+        }
+        if (alarm.sunday == true){
+            cancelWeeklyAlarm(alarm, context, ALARM_SUNDAY)
+        }
     }
 
 }

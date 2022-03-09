@@ -2,14 +2,13 @@ package com.ibrajix.multiclock.ui.fragments
 
 import android.annotation.SuppressLint
 import android.app.AlarmManager
-import android.app.PendingIntent
 import android.content.Context
-import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -19,15 +18,14 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.ibrajix.multiclock.R
 import com.ibrajix.multiclock.databinding.FragmentAlarmBinding
-import com.ibrajix.multiclock.service.AlarmReceiver
 import com.ibrajix.multiclock.ui.adapters.AlarmAdapter
 import com.ibrajix.multiclock.ui.viewmodel.AlarmViewModel
 import com.ibrajix.multiclock.utils.AlarmUtility.cancelAlarm
+import com.ibrajix.multiclock.utils.AlarmUtility.cancelWeeklyAlarm
+import com.ibrajix.multiclock.utils.AlarmUtility.checkWeeklyAlarmStatusAndCancel
 import com.ibrajix.multiclock.utils.AlarmUtility.scheduleAlarm
-import com.ibrajix.multiclock.utils.AlarmUtility.showMaterialDialog
 import com.ibrajix.multiclock.utils.AlarmUtility.showPickerAndSetAlarm
-import com.ibrajix.multiclock.utils.Constants.ALARM_INTENT_ID
-import com.ibrajix.multiclock.utils.Constants.ALARM_INTENT_TIME
+import com.ibrajix.multiclock.utils.UiUtility.showMaterialDialog
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -101,11 +99,17 @@ class AlarmFragment : Fragment() {
         AlarmAdapter.AlarmViewHolder.setOnAlarmChangeStatusListener { alarm, status ->
             alarm.id?.let { alarmViewModel.updateAlarmStatus(status, it) }
             //if status is true, set alarm
-            if (status) {
+            if (status && alarm.weeklyRecurring == false) {
                 scheduleAlarm(alarm = alarm, context = requireContext())
             } else {
+
                 //remove alarm
                 cancelAlarm(alarm = alarm, context = requireContext())
+
+                //cancel weekly alarm
+                if (alarm.weeklyRecurring == true){
+                    checkWeeklyAlarmStatusAndCancel(alarm, requireContext())
+                }
             }
 
         }
@@ -127,11 +131,8 @@ class AlarmFragment : Fragment() {
         }
 
         binding.floatingActionButton.setOnClickListener {
-
             val alarmManager: AlarmManager = activity?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-
                 if (alarmManager.canScheduleExactAlarms()) {
                     showPickerAndSetAlarm { alarm ->
                         alarmViewModel.createAlarm(alarm)

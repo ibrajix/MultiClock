@@ -1,5 +1,6 @@
 package com.ibrajix.multiclock.ui.fragments
 
+import android.app.AlarmManager
 import android.content.Context
 import android.content.Context.VIBRATOR_SERVICE
 import android.media.RingtoneManager
@@ -21,9 +22,12 @@ import com.ibrajix.multiclock.databinding.FragmentAlarmDetailsBinding
 import com.ibrajix.multiclock.ui.viewmodel.AlarmViewModel
 import com.ibrajix.multiclock.utils.AlarmUtility.cancelAlarm
 import com.ibrajix.multiclock.utils.AlarmUtility.cancelWeeklyAlarm
+import com.ibrajix.multiclock.utils.AlarmUtility.checkWeeklyAlarmStatusAndCancel
 import com.ibrajix.multiclock.utils.AlarmUtility.getRecurringDays
+import com.ibrajix.multiclock.utils.AlarmUtility.scheduleAlarm
 import com.ibrajix.multiclock.utils.AlarmUtility.scheduleWeeklyAlarm
-import com.ibrajix.multiclock.utils.AlarmUtility.showConfirmationDeleteDialog
+import com.ibrajix.multiclock.utils.AlarmUtility.showPickerAndSetAlarm
+import com.ibrajix.multiclock.utils.AlarmUtility.showPickerAndUpdateAlarm
 import com.ibrajix.multiclock.utils.Constants.ALARM_FRIDAY
 import com.ibrajix.multiclock.utils.Constants.ALARM_MONDAY
 import com.ibrajix.multiclock.utils.Constants.ALARM_SATURDAY
@@ -31,6 +35,8 @@ import com.ibrajix.multiclock.utils.Constants.ALARM_SUNDAY
 import com.ibrajix.multiclock.utils.Constants.ALARM_THURSDAY
 import com.ibrajix.multiclock.utils.Constants.ALARM_TUESDAY
 import com.ibrajix.multiclock.utils.Constants.ALARM_WEDNESDAY
+import com.ibrajix.multiclock.utils.UiUtility.showConfirmationDeleteDialog
+import com.ibrajix.multiclock.utils.UiUtility.showMaterialDialog
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -43,7 +49,6 @@ class AlarmDetailsFragment : Fragment() {
     private var _binding: FragmentAlarmDetailsBinding? = null
     private val binding get() = _binding!!
     private var vibrator: Vibrator? = null
-
 
     private val alarmViewModel: AlarmViewModel by viewModels()
     private val args: AlarmDetailsFragmentArgs by navArgs()
@@ -98,7 +103,6 @@ class AlarmDetailsFragment : Fragment() {
 
     private fun setView(){
 
-        binding.txtAlarmTime.text = args.alarm.time
         binding.switchBtnVibrate.isChecked = args.alarm.vibrate?:true
 
         val alarmTone: Uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
@@ -115,9 +119,11 @@ class AlarmDetailsFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
 
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-
                 alarmViewModel.getSingleAlarmResult.collect { alarm->
+
                     isVibrateChecked = alarm.vibrate
+
+                    binding.txtAlarmTime.text = alarm.time
 
                    val recurring = getRecurringDays(alarm.monday, alarm.tuesday, alarm.wednesday, alarm.thursday, alarm.friday, alarm.saturday, alarm.sunday)
 
@@ -127,6 +133,7 @@ class AlarmDetailsFragment : Fragment() {
                         || alarm.friday == true || alarm.saturday == true || alarm.sunday == true
                     ){
                         alarm.id?.let { alarmViewModel.updateAlarmWeeklyRecurring(true, it) }
+                        cancelAlarm(alarm, requireContext())
                     }
 
                     if (alarm.monday == true){
@@ -194,19 +201,62 @@ class AlarmDetailsFragment : Fragment() {
 
     private fun handleClicks(){
 
+
+        //on click edit alarm
+        binding.icEdit.setOnClickListener {
+            val alarmManager: AlarmManager = activity?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                if (alarmManager.canScheduleExactAlarms()) {
+                    showPickerAndUpdateAlarm(args.alarm) {
+                        cancelAlarm(args.alarm, requireContext())
+                        alarmViewModel.updateAlarm(it)
+                        scheduleAlarm(it, requireContext())
+                    }
+                }
+                else {
+                    //show a dialog for user to navigate to settings and turn on alarms and reminder
+                    showMaterialDialog(title = getString(R.string.need_permission), message = getString(R.string.permission_helper), anim = R.raw.permission)
+                }
+            }
+            else {
+                showPickerAndUpdateAlarm(args.alarm) {
+                    cancelAlarm(args.alarm, requireContext())
+                    alarmViewModel.updateAlarm(it)
+                    scheduleAlarm(it, requireContext())
+                }
+            }
+        }
+
+        //on click alarm ringtone
+        binding.lytRingtone.setOnClickListener {
+
+            //go to select alarm sound fragment
+            val action = AlarmDetailsFragmentDirections.actionAlarmDetailsFragmentToSelectAlarmSoundFragment(args.alarm)
+            findNavController().navigate(action)
+           
+
+        }
+
         //on click delete alarm
         binding.txtDelete.setOnClickListener {
+
             showConfirmationDeleteDialog(alarm = args.alarm, getString(R.string.delete_alarm_title), getString(R.string.delete_alarm_message_helper), callback = {
+
                 //on click delete
                 //remove/delete from room database
                 args.alarm.id?.let { it1 -> alarmViewModel.deleteAlarm(it1) }
+
                 //cancel all pending alarm to be scheduled
                 cancelAlarm(alarm = args.alarm, requireContext())
+
                 //cancel weekly alarm if scheduled
+                checkWeeklyAlarmStatusAndCancel(args.alarm, requireContext())
 
                 //go back to main fragment
                 findNavController().popBackStack()
+
             })
+
         }
 
         //on click back
