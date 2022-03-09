@@ -4,12 +4,14 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.media.RingtoneManager
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import com.ibrajix.multiclock.R
 import com.ibrajix.multiclock.database.Alarm
+import com.ibrajix.multiclock.database.DeviceSound
 import com.ibrajix.multiclock.service.AlarmReceiver
 import com.ibrajix.multiclock.service.AlarmService
 import com.ibrajix.multiclock.utils.Constants.ALARM_FRIDAY
@@ -256,7 +258,7 @@ object AlarmUtility {
                 }
             }
 
-            val alarm = Alarm(
+            val alarmSet = Alarm(
                 id = alarm.id,
                 time = formattedTime,
                 hour = pickedHour,
@@ -264,7 +266,7 @@ object AlarmUtility {
                 timeInMilliSecond = calendar.timeInMillis,
             )
 
-            callback(alarm)
+            callback(alarmSet)
 
             Toast.makeText(requireContext(), getString(R.string.alarm_set_for, DurationUtility.showAlarmToast(requireContext(), ringsIn(pickedHour, pickedMinute), false)), Toast.LENGTH_LONG).show()
 
@@ -552,5 +554,31 @@ object AlarmUtility {
             cancelWeeklyAlarm(alarm, context, ALARM_SUNDAY)
         }
     }
+
+    fun getNotificationSounds(context: Context): ArrayList<DeviceSound> {
+
+        val manager = RingtoneManager(context)
+        manager.setType(RingtoneManager.TYPE_ALARM)
+        val cursor = manager.cursor
+
+        val list: ArrayList<DeviceSound> = ArrayList()
+
+        while (cursor.moveToNext()) {
+
+            val id = cursor.getString(RingtoneManager.ID_COLUMN_INDEX)
+            val title = cursor.getString(RingtoneManager.TITLE_COLUMN_INDEX)
+            val uri = cursor.getString(RingtoneManager.URI_COLUMN_INDEX)
+
+            list.add(
+                DeviceSound(
+                name = title,
+                id = id,
+                uri = "$uri/$id",
+            ))
+        }
+
+        return list
+    }
+
 
 }

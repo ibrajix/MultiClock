@@ -1,20 +1,20 @@
 package com.ibrajix.multiclock.ui.fragments
 
-import android.content.Intent
 import android.os.Bundle
-import android.provider.MediaStore
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import com.ibrajix.multiclock.R
 import com.ibrajix.multiclock.databinding.FragmentSelectAlarmSoundBinding
+import com.ibrajix.multiclock.ui.adapters.DeviceSoundAdapter
+import com.ibrajix.multiclock.utils.AlarmUtility.getNotificationSounds
 
 class SelectAlarmSoundFragment : Fragment() {
 
     private var _binding: FragmentSelectAlarmSoundBinding? = null
     private val binding get() = _binding!!
+    lateinit var deviceSoundAdapter: DeviceSoundAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,7 +40,20 @@ class SelectAlarmSoundFragment : Fragment() {
     }
 
     private fun initView(){
+
+        deviceSoundAdapter = DeviceSoundAdapter(onClickListener = DeviceSoundAdapter.OnDeviceSoundClickListener{
+            //do something when sound is clicked
+
+        })
+
+        binding.rcvDeviceSounds.apply {
+            adapter = deviceSoundAdapter
+        }
+
+        deviceSoundAdapter.submitList(getNotificationSounds(requireContext()))
+
         handleClicks()
+
     }
 
     private fun handleClicks(){

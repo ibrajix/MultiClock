@@ -126,12 +126,13 @@
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:layout_marginTop="20dp"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="@+id/textView6"
                     app:layout_constraintTop_toBottomOf="@+id/textView6"
                     app:layout_constraintVertical_bias="0.482"
-                    tools:listitem="@layout/rcv_lyt_picked_sound" />
+                    tools:listitem="@layout/rcv_lyt_device_sounds" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

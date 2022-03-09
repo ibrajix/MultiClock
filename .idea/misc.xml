@@ -24,12 +24,13 @@
         <entry key="app/src/main/res/layout/fragment_alarm.xml" value="0.165" />
         <entry key="app/src/main/res/layout/fragment_alarm_details.xml" value="0.25" />
         <entry key="app/src/main/res/layout/fragment_clock.xml" value="0.1" />
-        <entry key="app/src/main/res/layout/fragment_select_alarm_sound.xml" value="0.165" />
+        <entry key="app/src/main/res/layout/fragment_select_alarm_sound.xml" value="0.20481658935546876" />
         <entry key="app/src/main/res/layout/fragment_select_sound.xml" value="0.2328125" />
         <entry key="app/src/main/res/layout/fragment_stopwatch.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_timer.xml" value="0.1" />
         <entry key="app/src/main/res/layout/rcv_device_sounds.xml" value="0.2328125" />
         <entry key="app/src/main/res/layout/rcv_lyt_alarms.xml" value="0.335" />
+        <entry key="app/src/main/res/layout/rcv_lyt_device_sounds.xml" value="0.2328125" />
         <entry key="app/src/main/res/layout/rcv_lyt_picked_sound.xml" value="0.25" />
         <entry key="app/src/main/res/menu/about_menu.xml" value="0.2205128205128205" />
         <entry key="app/src/main/res/menu/menu.xml" value="0.2598958333333333" />
